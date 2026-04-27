@@ -1450,6 +1450,10 @@
       <Project>{A60FE209-8667-5CA8-6581-0884FDF7A0B0}</Project>
       <Name>Unity.XR.Interaction.Toolkit.Samples.StarterAssets.Editor</Name>
     </ProjectReference>
+    <ProjectReference Include="Virtuix.OmniConnectSdk.csproj">
+      <Project>{A6A470FA-2962-23F9-E7F6-09590B3638B9}</Project>
+      <Name>Virtuix.OmniConnectSdk</Name>
+    </ProjectReference>
     <ProjectReference Include="Unity.XR.Interaction.Toolkit.Samples.StarterAssets.csproj">
       <Project>{DC10D141-BD6D-3818-6CC6-897E94989D18}</Project>
       <Name>Unity.XR.Interaction.Toolkit.Samples.StarterAssets</Name>

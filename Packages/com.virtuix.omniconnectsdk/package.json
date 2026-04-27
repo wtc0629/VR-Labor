@@ -1,0 +1,11 @@
+{
+  "name": "com.virtuix.omniconnectsdk",
+  "version": "0.1.2",
+  "displayName": "Omni Connect SDK",
+  "description": "Unity plugin to access Omni One movement data via shared memory.",
+  "unity": "2023.1",
+  "author": {
+    "name": "Virtuix",
+    "url": "https://www.virtuix.com"
+  }
+}

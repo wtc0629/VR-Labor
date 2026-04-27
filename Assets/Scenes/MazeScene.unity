@@ -327,6 +327,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1717954561962503725, guid: 5107ff31d94898545a5702c9e33a07f9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1454586699}
+    - targetCorrespondingSourceObject: {fileID: 1717954561962503725, guid: 5107ff31d94898545a5702c9e33a07f9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1454586705}
   m_SourcePrefab: {fileID: 100100000, guid: 5107ff31d94898545a5702c9e33a07f9, type: 3}
 --- !u!1 &582656102
 GameObject:
@@ -667,6 +670,19 @@ MonoBehaviour:
   SprintSpeed: 4
   Gravity: -9.81
   HMDCamera: {fileID: 1413990046}
+--- !u!114 &1454586705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1454586696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cca717f680ab5b8418bfc8a47c1dbfb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementSpeedMultiplier: 1
 --- !u!1 &2092139007
 GameObject:
   m_ObjectHideFlags: 0

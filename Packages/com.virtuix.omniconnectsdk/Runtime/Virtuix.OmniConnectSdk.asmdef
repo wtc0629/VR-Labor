@@ -1,0 +1,14 @@
+{
+    "name": "Virtuix.OmniConnectSdk",
+    "rootNamespace": "Virtuix.OmniConnectSdk",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
