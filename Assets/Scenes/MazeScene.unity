@@ -669,7 +669,8 @@ MonoBehaviour:
   WalkSpeed: 2
   SprintSpeed: 4
   Gravity: -9.81
-  OmniSpeedMultiplier: 15
+  threshhold: 0.009
+  OmniSpeedMultiplier: 20
   HMDCamera: {fileID: 1413990046}
 --- !u!114 &1454586705
 MonoBehaviour:

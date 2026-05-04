@@ -17,6 +17,7 @@ namespace MazeEscape
         public float WalkSpeed = 2f;
         public float SprintSpeed = 4f;
         public float Gravity = -9.81f;
+        public float threshhold;
 
         [Header("Omni One")]
         [Tooltip("Scales Omni movement vector. Increase for large environments.")]
@@ -58,8 +59,15 @@ namespace MazeEscape
             Vector2 omniInput = OmniConnectManager.GetMovementVector();
             if (omniInput.sqrMagnitude > 0.0001f)
             {
+                //Debug.Log(omniInput.sqrMagnitude);
                 // Omni vector already encodes direction + speed; rotate by HMD yaw
-                moveDir = flatRotation * new Vector3(omniInput.x, 0f, omniInput.y);
+                if (omniInput.sqrMagnitude > threshhold) {
+                    
+                    moveDir = flatRotation * new Vector3(omniInput.x, 0f, omniInput.y);
+                } else {
+                    moveDir = flatRotation * new Vector3(0f, 0f, 0f);
+                }
+                
                 usingOmni = true;
             }
             else
