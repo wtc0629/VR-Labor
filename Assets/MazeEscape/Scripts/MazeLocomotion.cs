@@ -11,11 +11,9 @@ namespace MazeEscape
     {
         [Header("Input Actions (Fallback)")]
         public InputActionReference MoveAction;
-        public InputActionReference SprintAction;
 
         [Header("Speed (Thumbstick)")]
         public float WalkSpeed = 2f;
-        public float SprintSpeed = 4f;
         public float Gravity = -9.81f;
         public float threshhold;
 
@@ -38,13 +36,11 @@ namespace MazeEscape
         void OnEnable()
         {
             MoveAction?.action.Enable();
-            SprintAction?.action.Enable();
         }
 
         void OnDisable()
         {
             MoveAction?.action.Disable();
-            SprintAction?.action.Disable();
         }
 
         void Update()
@@ -74,9 +70,7 @@ namespace MazeEscape
 #endif
             {
                 Vector2 stickInput = MoveAction != null ? MoveAction.action.ReadValue<Vector2>() : Vector2.zero;
-                bool sprinting = SprintAction != null && SprintAction.action.IsPressed();
-                float speed = sprinting ? SprintSpeed : WalkSpeed;
-                moveDir = flatRotation * new Vector3(stickInput.x, 0f, stickInput.y) * speed;
+                moveDir = flatRotation * new Vector3(stickInput.x, 0f, stickInput.y) * WalkSpeed;
             }
 
             if (_cc.isGrounded && _verticalVelocity < 0f)

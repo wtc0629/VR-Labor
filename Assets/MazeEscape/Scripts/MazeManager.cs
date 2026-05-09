@@ -14,6 +14,11 @@ namespace MazeEscape
         [Header("Player")]
         [Tooltip("Assign the XR Origin GameObject here")]
         public Transform XROrigin;
+        [Tooltip("Main Camera inside XR Origin (for minimap HMD attachment)")]
+        public Transform HMDCamera;
+
+        [Header("Systems")]
+        public MinimapController Minimap;
 
         private MazeRenderer _renderer;
 
@@ -33,6 +38,9 @@ namespace MazeEscape
                 var startPos = _renderer.GetStartPosition();
                 XROrigin.position = new Vector3(startPos.x, XROrigin.position.y, startPos.z);
             }
+
+            if (Minimap != null && HMDCamera != null && XROrigin != null)
+                Minimap.Initialize(cells, _renderer.CellSize, HMDCamera, XROrigin);
 
             var exit = new GameObject("ExitTrigger");
             exit.transform.SetParent(transform);

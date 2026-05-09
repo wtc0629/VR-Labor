@@ -16,6 +16,7 @@ MemoryCaptures/
 
 .vs/
 .idea/
+.claude/
 *.csproj
 *.sln
 *.suo

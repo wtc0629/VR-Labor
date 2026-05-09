@@ -16,6 +16,7 @@ namespace MazeEscape
 
             _triggered = true;
             Debug.Log("[MazeEscape] Maze Complete!");
+            GameManager.Instance?.TriggerWin();
             OnMazeComplete?.Invoke();
         }
     }
