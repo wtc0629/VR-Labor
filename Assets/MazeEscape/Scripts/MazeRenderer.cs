@@ -11,6 +11,7 @@ namespace MazeEscape
 
         [Header("Materials")]
         public Material WallMaterial;
+        public Material CornerPostMaterial;
         public Material FloorMaterial;
         public Material ExitMaterial;
 
@@ -36,6 +37,8 @@ namespace MazeEscape
                 }
             }
 
+            BuildCornerPosts();
+
             // Mark exit
             MarkExit();
         }
@@ -54,21 +57,35 @@ namespace MazeEscape
         {
             float half = CellSize / 2f;
 
-            // North wall (top edge, +Z side)
+            // Walls are exactly CellSize long — corner posts handle the gaps
             if (cell.WallNorth)
-                CreateWall(origin + new Vector3(half, WallHeight / 2f, CellSize), 0f, new Vector3(CellSize + WallThickness, WallHeight, WallThickness));
+                CreateWall(origin + new Vector3(half, WallHeight / 2f, CellSize), 0f, new Vector3(CellSize, WallHeight, WallThickness));
 
-            // South wall (bottom edge)
             if (cell.WallSouth)
-                CreateWall(origin + new Vector3(half, WallHeight / 2f, 0f), 0f, new Vector3(CellSize + WallThickness, WallHeight, WallThickness));
+                CreateWall(origin + new Vector3(half, WallHeight / 2f, 0f), 0f, new Vector3(CellSize, WallHeight, WallThickness));
 
-            // East wall (+X side)
             if (cell.WallEast)
-                CreateWall(origin + new Vector3(CellSize, WallHeight / 2f, half), 0f, new Vector3(WallThickness, WallHeight, CellSize + WallThickness));
+                CreateWall(origin + new Vector3(CellSize, WallHeight / 2f, half), 0f, new Vector3(WallThickness, WallHeight, CellSize));
 
-            // West wall (-X side)
             if (cell.WallWest)
-                CreateWall(origin + new Vector3(0f, WallHeight / 2f, half), 0f, new Vector3(WallThickness, WallHeight, CellSize + WallThickness));
+                CreateWall(origin + new Vector3(0f, WallHeight / 2f, half), 0f, new Vector3(WallThickness, WallHeight, CellSize));
+        }
+
+        private void BuildCornerPosts()
+        {
+            for (int x = 0; x <= _width; x++)
+            {
+                for (int y = 0; y <= _height; y++)
+                {
+                    var post = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    post.name = "CornerPost";
+                    post.transform.SetParent(transform);
+                    post.transform.localPosition = new Vector3(x * CellSize, WallHeight / 2f, y * CellSize);
+                    post.transform.localScale = new Vector3(WallThickness + 0.001f , WallHeight, WallThickness + 0.001f);
+                    var postMat = CornerPostMaterial ?? WallMaterial;
+                    if (postMat) post.GetComponent<Renderer>().material = postMat;
+                }
+            }
         }
 
         private void CreateWall(Vector3 position, float rotY, Vector3 scale)
