@@ -21,22 +21,12 @@ namespace MazeEscape
         fade2
         };
         public transition tansition;
-
-
         public Image _overlay;
         private float _targetAlpha;
 
-        void Awake()
-        {
-           
-        }
 
         void Update()
         {
-            
-            
-
-            
             if (tansition == transition.cut)
             {
                 bool insideWall = Physics.CheckSphere(transform.position, CheckRadius, WallLayers);
@@ -53,7 +43,7 @@ namespace MazeEscape
                 Collider[] hits = Physics.OverlapSphere(transform.position, CheckRadius);
                 foreach (Collider hit in hits)
                 {
-                    Vector3 closestSurfacePoint = hit.ClosestPointt(transform.position);
+                    Vector3 closestSurfacePoint = hit.ClosestPoint(transform.position);
 
                     float distance = Vector3.Distance(transform.position, closestSurfacePoint);
                     if (distance < mindistance) { 
@@ -66,7 +56,20 @@ namespace MazeEscape
                 currentColor.a = (_targetAlpha);
 
                 _overlay.color = currentColor;
+            }
+            if (tansition == transition.fade2)
+            {
+                float minDistance = CheckRadius;
+                Collider[] hits = Physics.OverlapSphere(transform.position, CheckRadius, WallLayers);
+                foreach (Collider hit in hits)
+                {
+                    float distance = Vector3.Distance(transform.position, hit.ClosestPoint(transform.position));
+                    if (distance < minDistance) minDistance = distance;
+                }
 
+                Color currentColor = _overlay.color;
+                currentColor.a = Mathf.InverseLerp(CheckRadius, 0f, minDistance);
+                _overlay.color = currentColor;
             }
             
         

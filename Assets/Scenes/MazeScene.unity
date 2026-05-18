@@ -209,7 +209,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6232745470614056090, guid: 5107ff31d94898545a5702c9e33a07f9, type: 3}
       propertyPath: m_SkinWidth
-      value: 0.6
+      value: 0.06
       objectReference: {fileID: 0}
     - target: {fileID: 6232745470614056090, guid: 5107ff31d94898545a5702c9e33a07f9, type: 3}
       propertyPath: m_MinMoveDistance
@@ -710,11 +710,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6e75149b2e4b1c4fab3d7589c5a2fa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CheckRadius: 0.5
+  CheckRadius: 0.4
   WallLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  tansition: 0
+  tansition: 2
   _overlay: {fileID: 1784876834}
 --- !u!20 &1413990049 stripped
 Camera:
