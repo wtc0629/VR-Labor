@@ -13,12 +13,14 @@ namespace MazeEscape
         [Tooltip("Layer mask for wall geometry (set to 'Default' if walls have no special layer)")]
         public LayerMask WallLayers = ~0;
 
+        [Tooltip("Detection radius for fade2 proximity mode (should be larger than CheckRadius)")]
+        public float FadeRadius = 0.8f;
+
 
         [Tooltip("What to do if contact with wall")]
         public enum transition {
         cut,
-        fade,
-        fade2
+        fade
         };
         public transition tansition;
         public Image _overlay;
@@ -39,28 +41,8 @@ namespace MazeEscape
             }
             if (tansition == transition.fade)
             {
-                float mindistance = CheckRadius + 1f;
-                Collider[] hits = Physics.OverlapSphere(transform.position, CheckRadius);
-                foreach (Collider hit in hits)
-                {
-                    Vector3 closestSurfacePoint = hit.ClosestPoint(transform.position);
-
-                    float distance = Vector3.Distance(transform.position, closestSurfacePoint);
-                    if (distance < mindistance) { 
-                        mindistance = distance;
-                    }
-
-                }
-                Color currentColor = _overlay.color;
-
-                currentColor.a = (_targetAlpha);
-
-                _overlay.color = currentColor;
-            }
-            if (tansition == transition.fade2)
-            {
-                float minDistance = CheckRadius;
-                Collider[] hits = Physics.OverlapSphere(transform.position, CheckRadius, WallLayers);
+                float minDistance = FadeRadius;
+                Collider[] hits = Physics.OverlapSphere(transform.position, FadeRadius, WallLayers);
                 foreach (Collider hit in hits)
                 {
                     float distance = Vector3.Distance(transform.position, hit.ClosestPoint(transform.position));
@@ -68,7 +50,7 @@ namespace MazeEscape
                 }
 
                 Color currentColor = _overlay.color;
-                currentColor.a = Mathf.InverseLerp(CheckRadius, 0f, minDistance);
+                currentColor.a = Mathf.InverseLerp(FadeRadius, FadeRadius*0.2f, minDistance);
                 _overlay.color = currentColor;
             }
             

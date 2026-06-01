@@ -9,6 +9,10 @@ namespace MazeEscape
         public float WallHeight = 3f;
         public float WallThickness = 0.3f;
 
+        [Header("Layer")]
+        [Tooltip("Layer assigned to walls and corner posts. Must match CameraFade's WallLayers.")]
+        public string WallLayerName = "Wall";
+
         [Header("Materials")]
         public Material WallMaterial;
         public Material CornerPostMaterial;
@@ -84,6 +88,8 @@ namespace MazeEscape
                     post.transform.localScale = new Vector3(WallThickness + 0.001f , WallHeight, WallThickness + 0.001f);
                     var postMat = CornerPostMaterial ?? WallMaterial;
                     if (postMat) post.GetComponent<Renderer>().material = postMat;
+                    int layer = LayerMask.NameToLayer(WallLayerName);
+                    if (layer >= 0) post.layer = layer;
                 }
             }
         }
@@ -97,6 +103,8 @@ namespace MazeEscape
             wall.transform.localRotation = Quaternion.Euler(0f, rotY, 0f);
             wall.transform.localScale = scale;
             if (WallMaterial) wall.GetComponent<Renderer>().material = WallMaterial;
+            int layer = LayerMask.NameToLayer(WallLayerName);
+            if (layer >= 0) wall.layer = layer;
         }
 
         private void MarkExit()
