@@ -263,7 +263,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 1
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: GameView
+  m_Name: SceneView
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
@@ -274,12 +274,12 @@ MonoBehaviour:
     height: 496
   m_MinSize: {x: 202, y: 226}
   m_MaxSize: {x: 4002, y: 4026}
-  m_ActualView: {fileID: 18}
+  m_ActualView: {fileID: 16}
   m_Panes:
   - {fileID: 16}
   - {fileID: 18}
-  m_Selected: 1
-  m_LastSelected: 0
+  m_Selected: 0
+  m_LastSelected: 1
 --- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -363,7 +363,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/MazeEscape/Scripts
+    - Assets/Fantasy Skybox FREE/Cubemaps/Classic
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -373,16 +373,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/MazeEscape/Scripts
+  - Assets/Fantasy Skybox FREE/Cubemaps/Classic
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\HKA\VR\VR-Project ARVR SS 26\VR-Project ARVR SS 26
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: b2b10000
-    m_LastClickedID: 45490
-    m_ExpandedIDs: 0000000036af000038af00003aaf00003caf00003eaf000040af000042af000044af000046af000048af00004aaf0000
+    m_SelectedIDs: 72b70000
+    m_LastClickedID: 46962
+    m_ExpandedIDs: 000000005caf00005eaf000060af000062af000064af000066af000068af00006aaf00006caf00006eaf000070af000072af000074af000076af000078af0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -411,7 +411,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000036af000038af00003aaf00003caf00003eaf000040af000042af000044af000046af000048af00004aaf0000
+    m_ExpandedIDs: 000000005caf00005eaf000060af000062af000064af000066af000068af00006aaf00006caf00006eaf000070af000072af000074af000076af000078af0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -512,7 +512,7 @@ MonoBehaviour:
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
   m_LastInspectedObjectInstanceID: -1
-  m_LastVerticalScrollValue: 652.6667
+  m_LastVerticalScrollValue: 674.00006
   m_GlobalObjectId: 
   m_InspectorMode: 0
   m_LockTracker:
@@ -559,7 +559,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 14fbffff20fbffff88aa000092aa0000baaa0000
+      m_ExpandedIDs: 14fbffff20fbffff88aa00008aaa000092aa0000baaa0000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -605,8 +605,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Scene\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 324
-    y: 78.66667
+    x: 325
+    y: 24
     width: 1008
     height: 470
   m_SerializedDataModeController:
@@ -1093,9 +1093,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: 11.654767, y: 2.0149083, z: 2.7142973}
+    m_Target: {x: 0, y: 2.3614397, z: 0}
     speed: 2
-    m_Value: {x: 11.654767, y: 2.0149083, z: 2.7142973}
+    m_Value: {x: 0, y: 2.3614397, z: 0}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1141,13 +1141,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.17512396, y: 0.56509686, z: -0.12423111, w: 0.7965957}
+    m_Target: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
     speed: 2
-    m_Value: {x: 0.17512394, y: 0.56509686, z: -0.12423111, w: 0.7965957}
+    m_Value: {x: -0.7071068, y: 0, z: -0, w: -0.7071068}
   m_Size:
-    m_Target: 2.045757
+    m_Target: 12.124355
     speed: 2
-    m_Value: 2.045757
+    m_Value: 12.124355
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1238,8 +1238,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Game\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 325
-    y: 24
+    x: 324
+    y: 78.66667
     width: 1008
     height: 470
   m_SerializedDataModeController:

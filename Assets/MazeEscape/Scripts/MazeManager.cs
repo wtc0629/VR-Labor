@@ -52,6 +52,39 @@ namespace MazeEscape
             col.size = new Vector3(_renderer.CellSize * 0.9f, 2f, _renderer.CellSize * 0.9f);
 
             exit.AddComponent<ExitTrigger>();
+
+            CreateTeleportPads();
+        }
+
+        private void CreateTeleportPads()
+        {
+            float cs = _renderer.CellSize;
+            var padA = CreateOnePad("TeleportPadA",
+                new Vector3((MazeWidth - 1) * cs + cs / 2f, 0f, cs / 2f));
+            var padB = CreateOnePad("TeleportPadB",
+                new Vector3(cs / 2f, 0f, (MazeHeight - 1) * cs + cs / 2f));
+            padA.OtherPad = padB;
+            padB.OtherPad = padA;
+        }
+
+        private TeleportPad CreateOnePad(string padName, Vector3 worldPos)
+        {
+            var go = new GameObject(padName);
+            go.transform.SetParent(transform);
+            go.transform.localPosition = worldPos;
+
+            var marker = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            marker.transform.SetParent(go.transform, false);
+            marker.transform.localPosition = new Vector3(0f, -0.04f, 0f);
+            marker.transform.localScale = new Vector3(_renderer.CellSize, 0.12f, _renderer.CellSize);
+            marker.GetComponent<Renderer>().material =
+                new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = new Color(0.5f, 0.1f, 0.9f) };
+            Destroy(marker.GetComponent<Collider>());
+
+            var pad = go.AddComponent<TeleportPad>();
+            pad.XROrigin = XROrigin;
+            pad.CC = XROrigin.GetComponent<CharacterController>();
+            return pad;
         }
 
 #if UNITY_EDITOR
