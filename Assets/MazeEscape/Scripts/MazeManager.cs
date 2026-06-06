@@ -20,6 +20,10 @@ namespace MazeEscape
         [Header("Systems")]
         public MinimapController Minimap;
 
+        [Header("Wall Breaker")]
+        [Tooltip("Assign the Right Controller Transform here")]
+        public Transform RightControllerOrigin;
+
         private MazeRenderer _renderer;
 
         void Awake()
@@ -54,6 +58,8 @@ namespace MazeEscape
             exit.AddComponent<ExitTrigger>();
 
             CreateTeleportPads();
+            SetupWallBreaker();
+            CreatePowerUpSphere();
         }
 
         private void CreateTeleportPads()
@@ -85,6 +91,43 @@ namespace MazeEscape
             pad.XROrigin = XROrigin;
             pad.CC = XROrigin.GetComponent<CharacterController>();
             return pad;
+        }
+
+        private void SetupWallBreaker()
+        {
+            if (XROrigin == null) return;
+            var wb = XROrigin.GetComponent<WallBreaker>()
+                  ?? XROrigin.gameObject.AddComponent<WallBreaker>();
+            wb.Minimap = Minimap;
+            wb.HMDCamera = HMDCamera;
+            wb.RightControllerOrigin = RightControllerOrigin;
+            wb.WallLayer = LayerMask.GetMask(_renderer.WallLayerName);
+        }
+
+        private void CreatePowerUpSphere()
+        {
+            if (XROrigin == null) return;
+            float cs = _renderer.CellSize;
+            int w = MazeWidth, h = MazeHeight;
+
+            int cx, cy;
+            do
+            {
+                cx = Random.Range(0, w);
+                cy = Random.Range(0, h);
+            }
+            while ((cx == 0 && cy == 0) || (cx == w - 1 && cy == h - 1) ||
+                   (cx == w - 1 && cy == 0) || (cx == 0 && cy == h - 1));
+
+            var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            go.name = "PowerUpSphere";
+            go.transform.SetParent(transform);
+            go.transform.localPosition = new Vector3(cx * cs + cs / 2f, 0.5f, cy * cs + cs / 2f);
+            go.transform.localScale = Vector3.one * 0.4f;
+            go.GetComponent<Renderer>().material =
+                new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = new Color(1f, 0.8f, 0f) };
+            go.GetComponent<Collider>().isTrigger = true;
+            go.AddComponent<PowerUpSphere>().Init(XROrigin.GetComponent<WallBreaker>());
         }
 
 #if UNITY_EDITOR

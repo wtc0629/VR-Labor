@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MazeEscape
@@ -31,19 +32,28 @@ namespace MazeEscape
             for (int i = transform.childCount - 1; i >= 0; i--)
                 DestroyImmediate(transform.GetChild(i).gameObject);
 
+            var wallDict = new Dictionary<(int, int, WallDirection), WallData>();
+
             for (int x = 0; x < _width; x++)
             {
                 for (int y = 0; y < _height; y++)
                 {
                     Vector3 cellOrigin = new Vector3(x * CellSize, 0f, y * CellSize);
                     BuildFloor(cellOrigin, x, y);
-                    BuildWalls(cells[x, y], cellOrigin);
+                    BuildWalls(cells[x, y], cellOrigin, x, y, wallDict);
                 }
             }
 
-            BuildCornerPosts();
+            // Link twins — shared-border walls that overlap
+            foreach (var kv in wallDict)
+            {
+                (int cx, int cy, WallDirection dir) = kv.Key;
+                (int ax, int ay, WallDirection ad) = AdjacentKey(cx, cy, dir);
+                if (wallDict.TryGetValue((ax, ay, ad), out WallData twin))
+                    kv.Value.Twin = twin;
+            }
 
-            // Mark exit
+            BuildCornerPosts();
             MarkExit();
         }
 
@@ -57,22 +67,55 @@ namespace MazeEscape
             if (FloorMaterial) floor.GetComponent<Renderer>().material = FloorMaterial;
         }
 
-        private void BuildWalls(MazeCell cell, Vector3 origin)
+        private void BuildWalls(MazeCell cell, Vector3 origin, int cx, int cy,
+            Dictionary<(int, int, WallDirection), WallData> dict)
         {
             float half = CellSize / 2f;
 
-            // Walls are exactly CellSize long — corner posts handle the gaps
             if (cell.WallNorth)
-                CreateWall(origin + new Vector3(half, WallHeight / 2f, CellSize), 0f, new Vector3(CellSize, WallHeight, WallThickness));
-
+            {
+                var w = CreateWall(origin + new Vector3(half, WallHeight / 2f, CellSize), 0f,
+                    new Vector3(CellSize, WallHeight, WallThickness));
+                RegisterWall(w, cx, cy, WallDirection.North, dict);
+            }
             if (cell.WallSouth)
-                CreateWall(origin + new Vector3(half, WallHeight / 2f, 0f), 0f, new Vector3(CellSize, WallHeight, WallThickness));
-
+            {
+                var w = CreateWall(origin + new Vector3(half, WallHeight / 2f, 0f), 0f,
+                    new Vector3(CellSize, WallHeight, WallThickness));
+                RegisterWall(w, cx, cy, WallDirection.South, dict);
+            }
             if (cell.WallEast)
-                CreateWall(origin + new Vector3(CellSize, WallHeight / 2f, half), 0f, new Vector3(WallThickness, WallHeight, CellSize));
-
+            {
+                var w = CreateWall(origin + new Vector3(CellSize, WallHeight / 2f, half), 0f,
+                    new Vector3(WallThickness, WallHeight, CellSize));
+                RegisterWall(w, cx, cy, WallDirection.East, dict);
+            }
             if (cell.WallWest)
-                CreateWall(origin + new Vector3(0f, WallHeight / 2f, half), 0f, new Vector3(WallThickness, WallHeight, CellSize));
+            {
+                var w = CreateWall(origin + new Vector3(0f, WallHeight / 2f, half), 0f,
+                    new Vector3(WallThickness, WallHeight, CellSize));
+                RegisterWall(w, cx, cy, WallDirection.West, dict);
+            }
+        }
+
+        private void RegisterWall(GameObject wall, int cx, int cy, WallDirection dir,
+            Dictionary<(int, int, WallDirection), WallData> dict)
+        {
+            var wd = wall.AddComponent<WallData>();
+            wd.CellX = cx; wd.CellY = cy; wd.Direction = dir;
+            wd.MazeWidth = _width; wd.MazeHeight = _height;
+            dict[(cx, cy, dir)] = wd;
+        }
+
+        private static (int, int, WallDirection) AdjacentKey(int cx, int cy, WallDirection dir)
+        {
+            return dir switch
+            {
+                WallDirection.North => (cx, cy + 1, WallDirection.South),
+                WallDirection.South => (cx, cy - 1, WallDirection.North),
+                WallDirection.East  => (cx + 1, cy, WallDirection.West),
+                _                   => (cx - 1, cy, WallDirection.East),
+            };
         }
 
         private void BuildCornerPosts()
@@ -85,7 +128,7 @@ namespace MazeEscape
                     post.name = "CornerPost";
                     post.transform.SetParent(transform);
                     post.transform.localPosition = new Vector3(x * CellSize, WallHeight / 2f, y * CellSize);
-                    post.transform.localScale = new Vector3(WallThickness + 0.001f , WallHeight, WallThickness + 0.001f);
+                    post.transform.localScale = new Vector3(WallThickness + 0.001f, WallHeight, WallThickness + 0.001f);
                     var postMat = CornerPostMaterial ?? WallMaterial;
                     if (postMat) post.GetComponent<Renderer>().material = postMat;
                     int layer = LayerMask.NameToLayer(WallLayerName);
@@ -94,7 +137,7 @@ namespace MazeEscape
             }
         }
 
-        private void CreateWall(Vector3 position, float rotY, Vector3 scale)
+        private GameObject CreateWall(Vector3 position, float rotY, Vector3 scale)
         {
             var wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
             wall.name = "Wall";
@@ -105,6 +148,7 @@ namespace MazeEscape
             if (WallMaterial) wall.GetComponent<Renderer>().material = WallMaterial;
             int layer = LayerMask.NameToLayer(WallLayerName);
             if (layer >= 0) wall.layer = layer;
+            return wall;
         }
 
         private void MarkExit()

@@ -194,5 +194,58 @@ namespace MazeEscape
 
         private int CellToTexX(int cx) => WallPixels + cx * (PixelsPerCell + WallPixels);
         private int CellToTexY(int cy) => WallPixels + cy * (PixelsPerCell + WallPixels);
+
+        public void RemoveWall(int cx, int cy, WallDirection dir)
+        {
+            if (_cells == null) return;
+
+            // Update MazeCell flags for this cell and its neighbour
+            switch (dir)
+            {
+                case WallDirection.North:
+                    _cells[cx, cy].WallNorth = false;
+                    if (cy + 1 < _height) _cells[cx, cy + 1].WallSouth = false;
+                    break;
+                case WallDirection.South:
+                    _cells[cx, cy].WallSouth = false;
+                    if (cy - 1 >= 0) _cells[cx, cy - 1].WallNorth = false;
+                    break;
+                case WallDirection.East:
+                    _cells[cx, cy].WallEast = false;
+                    if (cx + 1 < _width) _cells[cx + 1, cy].WallWest = false;
+                    break;
+                case WallDirection.West:
+                    _cells[cx, cy].WallWest = false;
+                    if (cx - 1 >= 0) _cells[cx - 1, cy].WallEast = false;
+                    break;
+            }
+
+            // Compute neighbour cell coords
+            int nx = cx, ny = cy;
+            switch (dir)
+            {
+                case WallDirection.North: ny = cy + 1; break;
+                case WallDirection.South: ny = cy - 1; break;
+                case WallDirection.East:  nx = cx + 1; break;
+                case WallDirection.West:  nx = cx - 1; break;
+            }
+            bool neighbourValid = nx >= 0 && nx < _width && ny >= 0 && ny < _height;
+
+            // Only repaint if at least one side has been explored
+            bool thisExplored = _explored[cx, cy];
+            bool neighExplored = neighbourValid && _explored[nx, ny];
+            if (!thisExplored && !neighExplored) return;
+
+            int tx = CellToTexX(cx);
+            int ty = CellToTexY(cy);
+            switch (dir)
+            {
+                case WallDirection.North: FillRect(tx, ty + PixelsPerCell, PixelsPerCell, WallPixels, FloorColor); break;
+                case WallDirection.South: FillRect(tx, ty - WallPixels,    PixelsPerCell, WallPixels, FloorColor); break;
+                case WallDirection.East:  FillRect(tx + PixelsPerCell, ty, WallPixels, PixelsPerCell, FloorColor); break;
+                case WallDirection.West:  FillRect(tx - WallPixels,    ty, WallPixels, PixelsPerCell, FloorColor); break;
+            }
+            _tex.Apply();
+        }
     }
 }

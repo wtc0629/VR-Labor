@@ -194,6 +194,7 @@ MonoBehaviour:
   XROrigin: {fileID: 1717954562066946108}
   HMDCamera: {fileID: 1931428192}
   Minimap: {fileID: 1701623674}
+  RightControllerOrigin: {fileID: 2042913251}
 --- !u!114 &582656104
 MonoBehaviour:
   m_ObjectHideFlags: 0

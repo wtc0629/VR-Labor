@@ -68,6 +68,7 @@
     <Compile Include="Assets\MazeEscape\Scripts\GameManager.cs" />
     <Compile Include="Assets\VRTemplateAssets\Scripts\RayAttachModifier.cs" />
     <Compile Include="Assets\VRTemplateAssets\Scripts\XRPokeFollowAffordanceFill.cs" />
+    <Compile Include="Assets\MazeEscape\Scripts\WallBreaker.cs" />
     <Compile Include="Assets\VRTemplateAssets\Scripts\BezierCurve.cs" />
     <Compile Include="Assets\MazeEscape\Scripts\MazeRenderer.cs" />
     <Compile Include="Assets\MazeEscape\Scripts\MazeManager.cs" />
@@ -76,9 +77,11 @@
     <Compile Include="Assets\MazeEscape\Scripts\TeleportPad.cs" />
     <Compile Include="Assets\VRTemplateAssets\Scripts\DestroyObject.cs" />
     <Compile Include="Assets\VRTemplateAssets\Scripts\VideoTimeScrubControl.cs" />
+    <Compile Include="Assets\MazeEscape\Scripts\PowerUpSphere.cs" />
     <Compile Include="Assets\MazeEscape\Scripts\CameraFade.cs" />
     <Compile Include="Assets\VRTemplateAssets\Scripts\Callout.cs" />
     <Compile Include="Assets\VRTemplateAssets\Scripts\CalloutGazeController.cs" />
+    <Compile Include="Assets\MazeEscape\Scripts\WallData.cs" />
     <Compile Include="Assets\MazeEscape\Scripts\MazeGenerator.cs" />
     <Compile Include="Assets\MazeEscape\Scripts\MinimapController.cs" />
     <Compile Include="Assets\MazeEscape\Scripts\ExitTrigger.cs" />
