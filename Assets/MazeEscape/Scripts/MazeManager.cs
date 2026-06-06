@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MazeEscape
@@ -25,6 +26,7 @@ namespace MazeEscape
         public Transform RightControllerOrigin;
 
         private MazeRenderer _renderer;
+        private readonly HashSet<(int, int)> _usedCells = new HashSet<(int, int)>();
 
         void Awake()
         {
@@ -59,7 +61,11 @@ namespace MazeEscape
 
             CreateTeleportPads();
             SetupWallBreaker();
+
+            _usedCells.Clear();
+            SetupCollectibleManager();
             CreatePowerUpSphere();
+            CreateCollectibleSpheres();
         }
 
         private void CreateTeleportPads()
@@ -104,20 +110,21 @@ namespace MazeEscape
             wb.WallLayer = LayerMask.GetMask(_renderer.WallLayerName);
         }
 
+        private void SetupCollectibleManager()
+        {
+            var cm = GetComponent<CollectibleManager>()
+                  ?? gameObject.AddComponent<CollectibleManager>();
+            int n = Mathf.Max(1, Mathf.Min(MazeWidth, MazeHeight) / 5);
+            Vector3 offset = Minimap != null ? Minimap.LocalOffset : new Vector3(0.12f, 0.08f, 0.25f);
+            cm.Initialize(n, HMDCamera, offset);
+        }
+
         private void CreatePowerUpSphere()
         {
             if (XROrigin == null) return;
             float cs = _renderer.CellSize;
-            int w = MazeWidth, h = MazeHeight;
 
-            int cx, cy;
-            do
-            {
-                cx = Random.Range(0, w);
-                cy = Random.Range(0, h);
-            }
-            while ((cx == 0 && cy == 0) || (cx == w - 1 && cy == h - 1) ||
-                   (cx == w - 1 && cy == 0) || (cx == 0 && cy == h - 1));
+            var (cx, cy) = PickUniqueCell(MazeWidth, MazeHeight, avoidCorners: true);
 
             var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             go.name = "PowerUpSphere";
@@ -129,6 +136,44 @@ namespace MazeEscape
             go.GetComponent<Collider>().isTrigger = true;
             go.AddComponent<PowerUpSphere>().Init(XROrigin.GetComponent<WallBreaker>());
         }
+
+        private void CreateCollectibleSpheres()
+        {
+            int n = Mathf.Max(1, Mathf.Min(MazeWidth, MazeHeight) / 5);
+            float cs = _renderer.CellSize;
+            for (int i = 0; i < n; i++)
+            {
+                var (cx, cy) = PickUniqueCell(MazeWidth, MazeHeight, avoidCorners: true);
+
+                var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                go.name = "CollectibleSphere";
+                go.transform.SetParent(transform);
+                go.transform.localPosition = new Vector3(cx * cs + cs / 2f, 0.5f, cy * cs + cs / 2f);
+                go.transform.localScale = Vector3.one * 0.35f;
+                go.GetComponent<Renderer>().material =
+                    new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = new Color(0.2f, 0.6f, 1f) };
+                go.GetComponent<Collider>().isTrigger = true;
+                go.AddComponent<CollectibleSphere>();
+            }
+        }
+
+        private (int, int) PickUniqueCell(int w, int h, bool avoidCorners = true)
+        {
+            int cx, cy;
+            do
+            {
+                cx = Random.Range(0, w);
+                cy = Random.Range(0, h);
+            }
+            while (_usedCells.Contains((cx, cy)) ||
+                   (avoidCorners && IsCorner(cx, cy, w, h)));
+            _usedCells.Add((cx, cy));
+            return (cx, cy);
+        }
+
+        private static bool IsCorner(int cx, int cy, int w, int h) =>
+            (cx == 0 && cy == 0) || (cx == w - 1 && cy == h - 1) ||
+            (cx == w - 1 && cy == 0) || (cx == 0 && cy == h - 1);
 
 #if UNITY_EDITOR
         [ContextMenu("Regenerate Maze")]

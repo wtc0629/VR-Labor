@@ -62,7 +62,7 @@ namespace MazeEscape
             textGo.transform.SetParent(_victoryPanel.transform, false);
             _victoryText = textGo.GetComponent<TextMeshProUGUI>();
             _victoryText.text = "Escaped!";
-            _victoryText.fontSize = 48;
+            _victoryText.fontSize = 36;
             _victoryText.alignment = TextAlignmentOptions.Center;
             _victoryText.color = new Color(1f, 0.85f, 0.2f);
             var textRt = textGo.GetComponent<RectTransform>();
@@ -82,9 +82,12 @@ namespace MazeEscape
             int minutes = Mathf.FloorToInt(elapsed / 60f);
             int seconds = Mathf.FloorToInt(elapsed % 60f);
 
-            _victoryText.text = $"Escaped!\n{minutes:00}:{seconds:00}";
+            string collect = CollectibleManager.Instance != null
+                ? $"\nCollect: {CollectibleManager.Instance.GetStatsText()}"
+                : "";
+            _victoryText.text = $"Escaped!\n{minutes:00}:{seconds:00}{collect}";
             _victoryPanel.SetActive(true);
-            Debug.Log($"[MazeEscape] Win! Time: {minutes:00}:{seconds:00}");
+            Debug.Log($"[MazeEscape] Win! Time: {minutes:00}:{seconds:00}{collect}");
         }
     }
 }

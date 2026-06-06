@@ -72,6 +72,7 @@
     <Compile Include="Assets\VRTemplateAssets\Scripts\BezierCurve.cs" />
     <Compile Include="Assets\MazeEscape\Scripts\MazeRenderer.cs" />
     <Compile Include="Assets\MazeEscape\Scripts\MazeManager.cs" />
+    <Compile Include="Assets\MazeEscape\Scripts\CollectibleManager.cs" />
     <Compile Include="Assets\VRTemplateAssets\Scripts\LaunchProjectile.cs" />
     <Compile Include="Assets\VRTemplateAssets\Scripts\HandSubsystemManager.cs" />
     <Compile Include="Assets\MazeEscape\Scripts\TeleportPad.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Assets\MazeEscape\Scripts\CameraFade.cs" />
     <Compile Include="Assets\VRTemplateAssets\Scripts\Callout.cs" />
     <Compile Include="Assets\VRTemplateAssets\Scripts\CalloutGazeController.cs" />
+    <Compile Include="Assets\MazeEscape\Scripts\CollectibleSphere.cs" />
     <Compile Include="Assets\MazeEscape\Scripts\WallData.cs" />
     <Compile Include="Assets\MazeEscape\Scripts\MazeGenerator.cs" />
     <Compile Include="Assets\MazeEscape\Scripts\MinimapController.cs" />

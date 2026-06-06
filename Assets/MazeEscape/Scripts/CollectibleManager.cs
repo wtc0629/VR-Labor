@@ -1,0 +1,97 @@
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+namespace MazeEscape
+{
+    public class CollectibleManager : MonoBehaviour
+    {
+        public static CollectibleManager Instance { get; private set; }
+
+        private int _total;
+        private int _collected;
+        private TextMeshProUGUI _countText;
+
+        void Awake()
+        {
+            if (Instance != null && Instance != this) { Destroy(this); return; }
+            Instance = this;
+        }
+
+        void OnDestroy()
+        {
+            if (Instance == this) Instance = null;
+        }
+
+        public void Initialize(int total, Transform hmdCamera, Vector3 mapOffset)
+        {
+            _total = total;
+            _collected = 0;
+            CreateIndicator(hmdCamera, mapOffset);
+        }
+
+        public void Collect()
+        {
+            _collected++;
+            if (_countText != null)
+                _countText.text = $"×{_collected}/{_total}";
+        }
+
+        public string GetStatsText() => $"{_collected}/{_total}";
+
+        private void CreateIndicator(Transform hmdCamera, Vector3 mapOffset)
+        {
+            if (hmdCamera == null) return;
+
+            var indicator = new GameObject("CollectibleIndicator");
+            indicator.transform.SetParent(hmdCamera, false);
+            indicator.transform.localPosition = new Vector3(
+                mapOffset.x - 0.07f,
+                mapOffset.y - 0.022f,
+                mapOffset.z);
+            indicator.transform.localRotation = Quaternion.identity;
+
+            const float cW = 100f, cH = 40f;
+            indicator.transform.localScale = Vector3.one * (0.04f / cW);
+
+            var canvas = indicator.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.WorldSpace;
+            indicator.AddComponent<CanvasScaler>();
+            indicator.GetComponent<RectTransform>().sizeDelta = new Vector2(cW, cH);
+
+            var bg = new GameObject("BG", typeof(Image));
+            bg.transform.SetParent(indicator.transform, false);
+            bg.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.6f);
+            FullRect(bg.GetComponent<RectTransform>());
+
+            var circle = new GameObject("Circle", typeof(Image));
+            circle.transform.SetParent(indicator.transform, false);
+            var circleImg = circle.GetComponent<Image>();
+            circleImg.sprite = Resources.GetBuiltinResource<Sprite>("UI/Skin/Knob.psd");
+            circleImg.color = new Color(0.2f, 0.6f, 1f);
+            var circleRt = circle.GetComponent<RectTransform>();
+            circleRt.anchorMin = new Vector2(0.06f, 0.12f);
+            circleRt.anchorMax = new Vector2(0.40f, 0.88f);
+            circleRt.offsetMin = circleRt.offsetMax = Vector2.zero;
+
+            var labelGo = new GameObject("Label", typeof(TextMeshProUGUI));
+            labelGo.transform.SetParent(indicator.transform, false);
+            _countText = labelGo.GetComponent<TextMeshProUGUI>();
+            _countText.text = $"×0/{_total}";
+            _countText.fontSize = 22;
+            _countText.color = Color.white;
+            _countText.alignment = TextAlignmentOptions.MidlineLeft;
+            var labelRt = labelGo.GetComponent<RectTransform>();
+            labelRt.anchorMin = new Vector2(0.44f, 0f);
+            labelRt.anchorMax = new Vector2(1f, 1f);
+            labelRt.offsetMin = labelRt.offsetMax = Vector2.zero;
+        }
+
+        private static void FullRect(RectTransform rt)
+        {
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = rt.offsetMax = Vector2.zero;
+        }
+    }
+}
