@@ -11,6 +11,7 @@ namespace MazeEscape
         private int _total;
         private int _collected;
         private TextMeshProUGUI _countText;
+        private Canvas _indicatorCanvas;
 
         void Awake()
         {
@@ -39,6 +40,12 @@ namespace MazeEscape
 
         public string GetStatsText() => $"{_collected}/{_total}";
 
+        public void SetVisible(bool visible)
+        {
+            if (_indicatorCanvas != null)
+                _indicatorCanvas.enabled = visible;
+        }
+
         private void CreateIndicator(Transform hmdCamera, Vector3 mapOffset)
         {
             if (hmdCamera == null) return;
@@ -54,8 +61,9 @@ namespace MazeEscape
             const float cW = 100f, cH = 40f;
             indicator.transform.localScale = Vector3.one * (0.04f / cW);
 
-            var canvas = indicator.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.WorldSpace;
+            _indicatorCanvas = indicator.AddComponent<Canvas>();
+            _indicatorCanvas.renderMode = RenderMode.WorldSpace;
+            var canvas = _indicatorCanvas;
             indicator.AddComponent<CanvasScaler>();
             indicator.GetComponent<RectTransform>().sizeDelta = new Vector2(cW, cH);
 

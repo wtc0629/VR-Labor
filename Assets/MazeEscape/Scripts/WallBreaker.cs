@@ -117,6 +117,18 @@ namespace MazeEscape
             labelRt.anchorMin = new Vector2(0.44f, 0f);
             labelRt.anchorMax = new Vector2(1f, 1f);
             labelRt.offsetMin = labelRt.offsetMax = Vector2.zero;
+
+            // Sync with minimap visibility
+            var minimapCanvas = Minimap?.GetComponent<Canvas>();
+            if (minimapCanvas != null && !minimapCanvas.enabled)
+                canvas.enabled = false;
+        }
+
+        public void SetIndicatorVisible(bool visible)
+        {
+            if (_indicator == null) return;
+            var c = _indicator.GetComponent<Canvas>();
+            if (c != null) c.enabled = visible;
         }
 
         private void DoSelect()

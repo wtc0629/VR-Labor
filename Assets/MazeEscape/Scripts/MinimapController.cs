@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace MazeEscape
@@ -32,6 +33,17 @@ namespace MazeEscape
         private int _texWidth, _texHeight;
         private int _prevCx = -1, _prevCy = -1;
         private int _playerDotCx = -1, _playerDotCy = -1;
+
+        private InputAction _toggleAction;
+
+        void Awake()
+        {
+            _toggleAction = new InputAction("ToggleMinimap", InputActionType.Button);
+            _toggleAction.AddBinding("<XRController>{LeftHand}/primaryButton");
+            _toggleAction.Enable();
+        }
+
+        void OnDisable() => _toggleAction?.Disable();
 
         public void Initialize(MazeCell[,] cells, float cellSize, Transform hmdCamera, Transform player)
         {
@@ -104,6 +116,15 @@ namespace MazeEscape
 
         void Update()
         {
+            if (_toggleAction.WasPressedThisFrame())
+            {
+                var canvas = GetComponent<Canvas>();
+                bool show = !canvas.enabled;
+                canvas.enabled = show;
+                CollectibleManager.Instance?.SetVisible(show);
+                _player?.GetComponent<WallBreaker>()?.SetIndicatorVisible(show);
+            }
+
             if (_cells == null || _player == null) return;
 
             int cx = Mathf.FloorToInt(_player.position.x / _cellSize);

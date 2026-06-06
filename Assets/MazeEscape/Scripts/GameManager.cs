@@ -23,6 +23,7 @@ namespace MazeEscape
             Instance = this;
             _startTime = Time.time;
             BuildVictoryPanel();
+            SetupHelpPanel();
         }
 
         private void BuildVictoryPanel()
@@ -71,6 +72,12 @@ namespace MazeEscape
             textRt.offsetMin = textRt.offsetMax = Vector2.zero;
 
             _victoryPanel.SetActive(false);
+        }
+
+        private void SetupHelpPanel()
+        {
+            var hp = GetComponent<HelpPanel>() ?? gameObject.AddComponent<HelpPanel>();
+            hp.Initialize(HMDCamera);
         }
 
         public void TriggerWin()
