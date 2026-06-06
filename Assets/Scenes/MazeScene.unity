@@ -188,8 +188,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c82bf79ff196a6b4ebcc54d53298d182, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MazeWidth: 4
-  MazeHeight: 4
+  MazeWidth: 5
+  MazeHeight: 5
   Seed: -1
   XROrigin: {fileID: 1717954562066946108}
   HMDCamera: {fileID: 1931428192}
