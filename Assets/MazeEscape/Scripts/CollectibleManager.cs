@@ -24,15 +24,11 @@ namespace MazeEscape
             if (Instance == this) Instance = null;
         }
 
-        public void Initialize(int total, Transform hmdCamera, Vector3 mapOffset)
+        public void Initialize(int total, Transform attachpoint, Vector3 mapOffset, Vector3 mapEulerAngles)
         {
             _total = total;
             _collected = 0;
-
-            if (_indicatorCanvas != null)
-                Destroy(_indicatorCanvas.gameObject);
-
-            CreateIndicator(hmdCamera, mapOffset);
+            CreateIndicator(attachpoint, mapOffset, mapEulerAngles);
         }
 
         public void Collect()
@@ -50,17 +46,17 @@ namespace MazeEscape
                 _indicatorCanvas.enabled = visible;
         }
 
-        private void CreateIndicator(Transform hmdCamera, Vector3 mapOffset)
+        private void CreateIndicator(Transform attachpoint, Vector3 mapOffset, Vector3 mapEulerAngles)
         {
-            if (hmdCamera == null) return;
+            if (attachpoint == null) return;
 
             var indicator = new GameObject("CollectibleIndicator");
-            indicator.transform.SetParent(hmdCamera, false);
+            indicator.transform.SetParent(attachpoint, false);
             indicator.transform.localPosition = new Vector3(
-                mapOffset.x - 0.07f,
-                mapOffset.y - 0.022f,
-                mapOffset.z);
-            indicator.transform.localRotation = Quaternion.identity;
+                mapOffset.x,
+                mapOffset.y - 0.06f,
+                mapOffset.z + 0.02f);
+            indicator.transform.localRotation = Quaternion.Euler(mapEulerAngles);
 
             const float cW = 100f, cH = 40f;
             indicator.transform.localScale = Vector3.one * (0.04f / cW);

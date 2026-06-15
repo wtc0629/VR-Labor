@@ -111,7 +111,9 @@ namespace MazeEscape
             var wb = XROrigin.GetComponent<WallBreaker>()
                   ?? XROrigin.gameObject.AddComponent<WallBreaker>();
             wb.Minimap = Minimap;
-            wb.HMDCamera = HMDCamera;
+            wb.attatchmentPoint = RightController;
+            wb.MinimapLocalOffset = MinimapLocalOffset;
+            wb.MinimapLocalEulerAngles = MinimapLocalEulerAngles;
             wb.RightControllerOrigin = RightControllerOrigin;
             wb.WallLayer = LayerMask.GetMask(_renderer.WallLayerName);
         }
@@ -121,8 +123,7 @@ namespace MazeEscape
             var cm = GetComponent<CollectibleManager>()
                   ?? gameObject.AddComponent<CollectibleManager>();
             int n = Mathf.Max(1, Mathf.Min(MazeWidth, MazeHeight) / 5);
-            Vector3 offset = Minimap != null ? Minimap.LocalOffset : new Vector3(0.12f, 0.08f, 0.25f);
-            cm.Initialize(n, HMDCamera, offset);
+            cm.Initialize(n, RightController, MinimapLocalOffset, MinimapLocalEulerAngles);
         }
 
         private void CreatePowerUpSphere()
