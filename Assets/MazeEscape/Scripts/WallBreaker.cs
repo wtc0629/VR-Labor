@@ -9,7 +9,9 @@ namespace MazeEscape
     {
         [HideInInspector] public Transform RightControllerOrigin;
         [HideInInspector] public MinimapController Minimap;
-        [HideInInspector] public Transform HMDCamera;
+        [HideInInspector] public Transform attatchmentPoint;
+        [HideInInspector] public Vector3 MinimapLocalOffset;
+        [HideInInspector] public Vector3 MinimapLocalEulerAngles;
         public LayerMask WallLayer;
         public float RayDistance = 15f;
 
@@ -62,22 +64,20 @@ namespace MazeEscape
 
         private void CreateIndicator()
         {
-            if (HMDCamera == null) return;
+            if (attatchmentPoint == null) return;
 
             _indicator = new GameObject("WallBreakerIndicator");
-            _indicator.transform.SetParent(HMDCamera, false);
+            _indicator.transform.SetParent(attatchmentPoint, false);
 
             // Minimap sits at LocalOffset (default 0.12, 0.08, 0.25) and is ~0.1m wide.
             // Place indicator ~0.07m to the left of the minimap centre → closer to FOV centre.
-            Vector3 mapOffset = Minimap != null
-                ? Minimap.LocalOffset
-                : new Vector3(0.12f, 0.08f, 0.25f);
+            Vector3 mapOffset = MinimapLocalOffset;
 
             _indicator.transform.localPosition = new Vector3(
-                mapOffset.x - 0.07f,
-                mapOffset.y,
-                mapOffset.z);
-            _indicator.transform.localRotation = Quaternion.identity;
+                mapOffset.x,
+                mapOffset.y - 0.06f,
+                mapOffset.z - 0.02f);
+            _indicator.transform.localRotation = Quaternion.Euler(MinimapLocalEulerAngles);
 
             // Canvas: 100 × 40 px → 0.04 m wide in world space
             const float cW = 100f, cH = 40f;
