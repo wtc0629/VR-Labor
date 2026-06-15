@@ -45,7 +45,7 @@ namespace MazeEscape
 
         void OnDisable() => _toggleAction?.Disable();
 
-        public void Initialize(MazeCell[,] cells, float cellSize, Transform hmdCamera, Transform player)
+        public void Initialize(MazeCell[,] cells, float cellSize, Transform hmdCamera, Transform player, Transform rightHand, Vector3 localOffsetRightHand, Vector3 localEulerAnglesRightHand)
         {
             _cells = cells;
             _cellSize = cellSize;
@@ -69,11 +69,11 @@ namespace MazeEscape
             _tex.SetPixels(fog);
             _tex.Apply();
 
-            SetupCanvas(hmdCamera);
+            SetupCanvas(rightHand, localOffsetRightHand, localEulerAnglesRightHand);
             MarkExit();
         }
 
-        private void SetupCanvas(Transform hmdCamera)
+        private void SetupCanvas(Transform rightHand, Vector3 localOffsetRightHand, Vector3 localEulerAnglesRightHand)
         {
             var canvas = GetComponent<Canvas>();
             canvas.renderMode = RenderMode.WorldSpace;
@@ -83,9 +83,9 @@ namespace MazeEscape
 
             float worldScale = 0.1f / DisplaySize;
             transform.localScale = Vector3.one * worldScale;
-            transform.SetParent(hmdCamera, false);
-            transform.localPosition = LocalOffset;
-            transform.localRotation = Quaternion.identity;
+            transform.SetParent(rightHand, false);
+            transform.localPosition = localOffsetRightHand;
+            transform.localRotation = Quaternion.Euler(localEulerAnglesRightHand);
 
             // Background
             var bg = new GameObject("Background", typeof(Image));

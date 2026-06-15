@@ -17,6 +17,12 @@ namespace MazeEscape
         public Transform XROrigin;
         [Tooltip("Main Camera inside XR Origin (for minimap HMD attachment)")]
         public Transform HMDCamera;
+        [Tooltip("Right Controller Transform")]
+        public Transform RightController;
+
+        [Header("Minimap local offset and rotation")]
+        public Vector3 MinimapLocalOffset = new Vector3(0.12f, 0.08f, 0.25f);
+        public Vector3 MinimapLocalEulerAngles = new Vector3(0f, 270f, 0f);
 
         [Header("Systems")]
         public MinimapController Minimap;
@@ -45,8 +51,8 @@ namespace MazeEscape
                 XROrigin.position = new Vector3(startPos.x, XROrigin.position.y, startPos.z);
             }
 
-            if (Minimap != null && HMDCamera != null && XROrigin != null)
-                Minimap.Initialize(cells, _renderer.CellSize, HMDCamera, XROrigin);
+            if (Minimap != null && HMDCamera != null && XROrigin != null && RightController != null)
+                Minimap.Initialize(cells, _renderer.CellSize, HMDCamera, XROrigin, RightController, MinimapLocalOffset, MinimapLocalEulerAngles);
 
             var exit = new GameObject("ExitTrigger");
             exit.transform.SetParent(transform);

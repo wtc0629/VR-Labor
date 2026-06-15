@@ -8,9 +8,15 @@ namespace MazeEscape
     {
         public static GameManager Instance { get; private set; }
 
-        [Header("HMD Reference")]
+        [Header("References")]
         [Tooltip("Main Camera inside XR Origin")]
         public Transform HMDCamera;
+        [Tooltip("Left Hand Controller")]
+        public Transform leftHand;
+
+        [Header("Help Panel")]
+        public Vector3 HelpPanelLocalPosition = new Vector3(0f, 0f, 0.5f);
+        public Vector3 HelpPanelLocalEulerAngles = Vector3.zero;
 
         private float _startTime;
         private bool _won;
@@ -77,7 +83,7 @@ namespace MazeEscape
         private void SetupHelpPanel()
         {
             var hp = GetComponent<HelpPanel>() ?? gameObject.AddComponent<HelpPanel>();
-            hp.Initialize(HMDCamera);
+            hp.Initialize(HMDCamera, leftHand, HelpPanelLocalPosition, HelpPanelLocalEulerAngles);
         }
 
         public void TriggerWin()

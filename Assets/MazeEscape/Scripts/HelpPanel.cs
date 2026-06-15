@@ -19,16 +19,16 @@ namespace MazeEscape
 
         void OnDisable() => _toggleAction?.Disable();
 
-        public void Initialize(Transform hmdCamera)
+        public void Initialize(Transform hmdCamera, Transform leftHand, Vector3 localPosition, Vector3 localEulerAngles)
         {
             if (hmdCamera == null) return;
+            if (leftHand == null) return;
 
             var panelGo = new GameObject("HelpPanel");
-            panelGo.transform.SetParent(hmdCamera, false);
+            panelGo.transform.SetParent(leftHand, false);
 
-            // Mirror minimap position to left side of view
-            panelGo.transform.localPosition = new Vector3(0f, 0f, 0.5f);
-            panelGo.transform.localRotation = Quaternion.identity;
+            panelGo.transform.localPosition = localPosition;
+            panelGo.transform.localRotation = Quaternion.Euler(localEulerAngles);
 
             const float cW = 280f, cH = 160f;
             panelGo.transform.localScale = Vector3.one * (0.14f / cW);
