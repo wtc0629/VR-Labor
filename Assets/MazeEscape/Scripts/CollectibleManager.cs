@@ -28,6 +28,10 @@ namespace MazeEscape
         {
             _total = total;
             _collected = 0;
+
+            if (_indicatorCanvas != null)
+                Destroy(_indicatorCanvas.gameObject);
+
             CreateIndicator(hmdCamera, mapOffset);
         }
 

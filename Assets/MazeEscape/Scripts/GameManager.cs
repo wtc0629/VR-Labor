@@ -86,6 +86,14 @@ namespace MazeEscape
             hp.Initialize(HMDCamera, leftHand, HelpPanelLocalPosition, HelpPanelLocalEulerAngles);
         }
 
+        // Reset win state and timer for a maze restart.
+        public void ResetGame()
+        {
+            _won = false;
+            _startTime = Time.time;
+            _victoryPanel?.SetActive(false);
+        }
+
         public void TriggerWin()
         {
             if (_won) return;

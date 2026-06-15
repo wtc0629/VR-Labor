@@ -131,6 +131,18 @@ namespace MazeEscape
             if (c != null) c.enabled = visible;
         }
 
+        // Clear power-up/selection state for a maze restart.
+        public void ResetState()
+        {
+            _hasPowerUp = false;
+            _selected = null;
+            if (_indicator != null)
+            {
+                Destroy(_indicator);
+                _indicator = null;
+            }
+        }
+
         private void DoSelect()
         {
             int mask = WallLayer.value != 0 ? WallLayer.value : ~0;

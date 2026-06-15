@@ -181,6 +181,21 @@ namespace MazeEscape
             (cx == 0 && cy == 0) || (cx == w - 1 && cy == h - 1) ||
             (cx == w - 1 && cy == 0) || (cx == 0 && cy == h - 1);
 
+        // Re-generate the maze as a square of the given size and reset
+        // dependent systems (wall breaker power-up, win state).
+        public void Restart(int newSize)
+        {
+            newSize = Mathf.Max(3, newSize);
+            MazeWidth = newSize;
+            MazeHeight = newSize;
+
+            if (XROrigin != null && XROrigin.TryGetComponent<WallBreaker>(out var wb))
+                wb.ResetState();
+            GameManager.Instance?.ResetGame();
+
+            BuildMaze();
+        }
+
 #if UNITY_EDITOR
         [ContextMenu("Regenerate Maze")]
         void RegenerateMaze() => BuildMaze();

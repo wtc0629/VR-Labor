@@ -47,12 +47,18 @@ namespace MazeEscape
 
         public void Initialize(MazeCell[,] cells, float cellSize, Transform hmdCamera, Transform player, Transform rightHand, Vector3 localOffsetRightHand, Vector3 localEulerAnglesRightHand)
         {
+            // Discard UI built by a previous Initialize() call (restart)
+            for (int i = transform.childCount - 1; i >= 0; i--)
+                Destroy(transform.GetChild(i).gameObject);
+
             _cells = cells;
             _cellSize = cellSize;
             _width = cells.GetLength(0);
             _height = cells.GetLength(1);
             _player = player;
             _explored = new bool[_width, _height];
+            _prevCx = _prevCy = -1;
+            _playerDotCx = _playerDotCy = -1;
 
             _texWidth  = (PixelsPerCell + WallPixels) * _width  + WallPixels;
             _texHeight = (PixelsPerCell + WallPixels) * _height + WallPixels;
