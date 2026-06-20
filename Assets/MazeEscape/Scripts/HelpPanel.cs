@@ -74,14 +74,14 @@ namespace MazeEscape
             var tmp = textGo.GetComponent<TextMeshProUGUI>();
             tmp.text =
                 "<color=#FFD700><b>Controls</b></color>\n" +
-                "<color=#AADDFF>[X]</color>        Toggle minimap\n" +
-                "<color=#AADDFF>[Y]</color>        Toggle this panel\n" +
-                "<color=#AADDFF>[Trigger]</color>  Confirm teleport\n" +
-                "<color=#FFD700>[Gold ●]</color>   Wall breaker item\n" +
-                "<color=#AADDFF>[A]</color>        Select wall (right ray)\n" +
-                "<color=#AADDFF>[B]</color>        Confirm destroy\n" +
-                "<color=#AADDFF>[R Stick]</color>  Adjust maze size";
-            tmp.fontSize = 13;
+                "<color=#AADDFF>[Y]</color>         Toggle this panel\n" +
+                "<color=#AADDFF>[R Grip]</color>    Confirm teleport\n" +
+                "<color=#AADDFF>[R Trigger]</color> Restart (aim at btn)\n" +
+                "<color=#AADDFF>[R Stick]</color>   Adjust maze size\n" +
+                "<color=#FFD700>[Gold ●]</color>    Wall breaker item\n" +
+                "<color=#AADDFF>[A]</color>         Select wall (right ray)\n" +
+                "<color=#AADDFF>[B]</color>         Confirm destroy";
+            tmp.fontSize = 12;
             tmp.color = Color.white;
             tmp.alignment = TextAlignmentOptions.TopLeft;
             var textRt = textGo.GetComponent<RectTransform>();
@@ -154,11 +154,18 @@ namespace MazeEscape
             CreateLabel(panelRoot, "RestartBtnLabel", "Restart",
                 new Vector2(0.05f, 0.04f), new Vector2(0.95f, 0.19f), 16, FontStyles.Bold);
 
+            // Parent the hitzone to leftHand (panelRoot's parent), NOT to the
+            // canvas, because the canvas scale (~0.0005) would shrink the
+            // collider to sub-millimetre size, making it undetectable by
+            // the far-ray interactor.
+            var leftHand = panelRoot.parent;
             var hitZone = GameObject.CreatePrimitive(PrimitiveType.Cube);
             hitZone.name = "RestartHitZone";
-            hitZone.transform.SetParent(panelRoot, false);
-            hitZone.transform.localPosition = new Vector3(0f, -0.0462f, -0.001f);
-            hitZone.transform.localScale = new Vector3(0.126f, 0.018f, 0.005f);
+            hitZone.transform.SetParent(leftHand, false);
+            hitZone.transform.localPosition = panelRoot.localPosition
+                + panelRoot.localRotation * new Vector3(0f, -0.0462f, -0.002f);
+            hitZone.transform.localRotation = panelRoot.localRotation;
+            hitZone.transform.localScale = new Vector3(0.126f, 0.018f, 0.01f);
             hitZone.GetComponent<Renderer>().enabled = false;
             Destroy(hitZone.GetComponent<Collider>());
             var col = hitZone.AddComponent<BoxCollider>();
