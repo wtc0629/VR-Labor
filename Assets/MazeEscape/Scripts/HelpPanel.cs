@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using System.Collections.Generic;
 using TMPro;
 
 namespace MazeEscape
@@ -15,10 +16,23 @@ namespace MazeEscape
         // Slider visual range, in px, relative to the handle's anchor point
         private const float HandleRangePx = 117.6f;
 
-        private MazeSizeSlider _sizeSlider;
+        // Maze-size state (always adjustable via right thumbstick)
+        private int _mazeSize;
+        private const int MinSize = 4;
+        private const int MaxSize = 20;
+        private const float Deadzone = 0.4f;
+        private const float StepInterval = 0.25f;
+        private float _stepTimer;
+
         private TextMeshProUGUI _sizeLabel;
         private RectTransform _handleRt;
         private MazeManager _mazeManager;
+
+        // Right controller state read via XR subsystem (bypasses Input System
+        // binding resolution issues with OpenXR thumbstick controls).
+        private UnityEngine.XR.InputDevice _rightController;
+        private bool _rightHoverRestart;
+        private bool _prevTrigger;
 
         void Awake()
         {
@@ -31,19 +45,17 @@ namespace MazeEscape
 
         public void Initialize(Transform hmdCamera, Transform leftHand, Vector3 localPosition, Vector3 localEulerAngles)
         {
-            if (hmdCamera == null) return;
-            if (leftHand == null) return;
+            if (hmdCamera == null || leftHand == null) return;
 
             _mazeManager = FindFirstObjectByType<MazeManager>();
+            _mazeSize = _mazeManager != null ? _mazeManager.MazeWidth : 10;
+            _mazeSize = Mathf.Clamp(_mazeSize, MinSize, MaxSize);
 
             var panelGo = new GameObject("HelpPanel");
             panelGo.transform.SetParent(leftHand, false);
-
             panelGo.transform.localPosition = localPosition;
             panelGo.transform.localRotation = Quaternion.Euler(localEulerAngles);
 
-            // Canvas: 280 x 240 px — controls text on top, maze-size slider +
-            // restart button in the lower portion.
             const float cW = 280f, cH = 240f;
             panelGo.transform.localScale = Vector3.one * (0.14f / cW);
 
@@ -57,7 +69,6 @@ namespace MazeEscape
             bg.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.72f);
             FullRect(bg.GetComponent<RectTransform>());
 
-            // Controls text — top portion of the canvas
             var textGo = new GameObject("Text", typeof(TextMeshProUGUI));
             textGo.transform.SetParent(panelGo.transform, false);
             var tmp = textGo.GetComponent<TextMeshProUGUI>();
@@ -68,7 +79,8 @@ namespace MazeEscape
                 "<color=#AADDFF>[Trigger]</color>  Confirm teleport\n" +
                 "<color=#FFD700>[Gold ●]</color>   Wall breaker item\n" +
                 "<color=#AADDFF>[A]</color>        Select wall (right ray)\n" +
-                "<color=#AADDFF>[B]</color>        Confirm destroy";
+                "<color=#AADDFF>[B]</color>        Confirm destroy\n" +
+                "<color=#AADDFF>[R Stick]</color>  Adjust maze size";
             tmp.fontSize = 13;
             tmp.color = Color.white;
             tmp.alignment = TextAlignmentOptions.TopLeft;
@@ -78,7 +90,6 @@ namespace MazeEscape
             textRt.offsetMin = new Vector2(10f, 4f);
             textRt.offsetMax = new Vector2(-8f, -4f);
 
-            // Divider line
             var divGo = new GameObject("Divider", typeof(Image));
             divGo.transform.SetParent(panelGo.transform, false);
             divGo.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.15f);
@@ -91,18 +102,12 @@ namespace MazeEscape
             BuildRestartButton(panelGo.transform);
         }
 
-        // ── Maze-size slider ──────────────────────────────────────────────────
-        // Track spans anchors x:[0.08,0.92] y:[0.225,0.275] → centred at canvas
-        // local (0, -0.03)m, half-width 0.0588m. The 3-D hit-zone covers this
-        // area for right-hand hover detection (see MazeSizeSlider).
+        // ── Maze-size slider (visual only — input handled in Update) ─────────
         private void BuildSizeSlider(Transform panelRoot)
         {
-            int initialValue = _mazeManager != null ? _mazeManager.MazeWidth : 10;
-
-            _sizeLabel = CreateLabel(panelRoot, "SizeLabel", $"Maze Size: {initialValue}",
+            _sizeLabel = CreateLabel(panelRoot, "SizeLabel", $"Maze Size: {_mazeSize}",
                 new Vector2(0.05f, 0.305f), new Vector2(0.95f, 0.375f), 14, FontStyles.Normal);
 
-            // Track background bar
             var track = new GameObject("Track", typeof(Image));
             track.transform.SetParent(panelRoot, false);
             track.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.25f);
@@ -111,7 +116,6 @@ namespace MazeEscape
             trackRt.anchorMax = new Vector2(0.92f, 0.275f);
             trackRt.offsetMin = trackRt.offsetMax = Vector2.zero;
 
-            // Handle knob
             var handle = new GameObject("Handle", typeof(Image));
             handle.transform.SetParent(panelRoot, false);
             var handleImg = handle.GetComponent<Image>();
@@ -122,34 +126,21 @@ namespace MazeEscape
             _handleRt.pivot = new Vector2(0.5f, 0.5f);
             _handleRt.sizeDelta = new Vector2(16f, 16f);
 
-            // Invisible 3-D hit zone covering the track for ray-drag input
-            var hitZone = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            hitZone.name = "SliderHitZone";
-            hitZone.transform.SetParent(panelRoot, false);
-            hitZone.transform.localPosition = new Vector3(0f, -0.024f, -0.001f);
-            hitZone.transform.localScale = new Vector3(0.1176f, 0.018f, 0.005f);
-            hitZone.GetComponent<Renderer>().enabled = false;
-            Destroy(hitZone.GetComponent<Collider>());
-            var col = hitZone.AddComponent<BoxCollider>();
-            col.size = Vector3.one;
-
-            hitZone.AddComponent<XRSimpleInteractable>();
-
-            _sizeSlider = hitZone.AddComponent<MazeSizeSlider>();
-            _sizeSlider.Setup(initialValue);
-            _sizeSlider.OnValueChanged += UpdateSliderVisual;
-
-            UpdateSliderVisual(_sizeSlider.Value);
+            UpdateSliderVisual();
         }
 
-        private void UpdateSliderVisual(int value)
+        private void UpdateSliderVisual()
         {
-            _sizeLabel.text = $"Maze Size: {value}";
-            float t = Mathf.InverseLerp(_sizeSlider.MinValue, _sizeSlider.MaxValue, value);
+            if (_sizeLabel == null) return;
+            _sizeLabel.text = $"Maze Size: {_mazeSize}";
+            float t = Mathf.InverseLerp(MinSize, MaxSize, _mazeSize);
             _handleRt.anchoredPosition = new Vector2(Mathf.Lerp(-HandleRangePx, HandleRangePx, t), 0f);
         }
 
         // ── Restart button ───────────────────────────────────────────────────
+        // Uses XRI hover detection (reliable) combined with XR subsystem
+        // trigger reading (bypasses the selectEntered blocking issue caused
+        // by the left hand's near-interactor always hovering its own panel).
         private void BuildRestartButton(Transform panelRoot)
         {
             var btnBg = new GameObject("RestartBtnBG", typeof(Image));
@@ -174,10 +165,16 @@ namespace MazeEscape
             col.size = Vector3.one;
 
             var interactable = hitZone.AddComponent<XRSimpleInteractable>();
-            interactable.selectEntered.AddListener(args =>
+            interactable.selectMode = InteractableSelectMode.Multiple;
+            interactable.hoverEntered.AddListener(args =>
             {
                 if (args.interactorObject.handedness == InteractorHandedness.Right)
-                    _mazeManager?.Restart(_sizeSlider.Value);
+                    _rightHoverRestart = true;
+            });
+            interactable.hoverExited.AddListener(args =>
+            {
+                if (args.interactorObject.handedness == InteractorHandedness.Right)
+                    _rightHoverRestart = false;
             });
         }
 
@@ -203,6 +200,44 @@ namespace MazeEscape
         {
             if (_canvas != null && _toggleAction.WasPressedThisFrame())
                 _canvas.enabled = !_canvas.enabled;
+
+            if (!_rightController.isValid)
+            {
+                var devices = new List<UnityEngine.XR.InputDevice>();
+                UnityEngine.XR.InputDevices.GetDevicesWithCharacteristics(
+                    UnityEngine.XR.InputDeviceCharacteristics.Right |
+                    UnityEngine.XR.InputDeviceCharacteristics.Controller,
+                    devices);
+                if (devices.Count > 0) _rightController = devices[0];
+                if (!_rightController.isValid) return;
+            }
+
+            // Right thumbstick → step maze size (always active)
+            _stepTimer -= Time.deltaTime;
+            if (_stepTimer <= 0f)
+            {
+                _rightController.TryGetFeatureValue(
+                    UnityEngine.XR.CommonUsages.primary2DAxis, out Vector2 stick);
+                if (Mathf.Abs(stick.x) >= Deadzone)
+                {
+                    int newSize = Mathf.Clamp(
+                        _mazeSize + (stick.x > 0 ? 1 : -1), MinSize, MaxSize);
+                    if (newSize != _mazeSize)
+                    {
+                        _mazeSize = newSize;
+                        UpdateSliderVisual();
+                    }
+                    _stepTimer = StepInterval;
+                }
+            }
+
+            // Right trigger + hover on restart button → restart
+            _rightController.TryGetFeatureValue(
+                UnityEngine.XR.CommonUsages.triggerButton, out bool trigger);
+            bool triggerDown = trigger && !_prevTrigger;
+            _prevTrigger = trigger;
+            if (_rightHoverRestart && triggerDown)
+                _mazeManager?.Restart(_mazeSize);
         }
 
         private static void FullRect(RectTransform rt)
