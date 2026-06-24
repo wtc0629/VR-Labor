@@ -9,7 +9,7 @@ namespace MazeEscape
     // Attach to the Main Camera (inside XR Origin > Camera Offset).
     public class CameraFade : MonoBehaviour
     {
-        [Tooltip("Sphere radius to check for wall collision around the camera")]
+        [Tooltip("Sphere radius to check for wall collision around the camera (cut to black)")]
         public float CheckRadius = 0.15f;
 
         [Tooltip("Layer mask for wall geometry only. Do not include the player body layer here.")]
@@ -19,10 +19,10 @@ namespace MazeEscape
         public string WallLayerName = "Wall";
 
         [Tooltip("Distance from the player body to a wall that should force a transition to black")]
-        public float BodyCheckDistance = 0.1f;
+        public float BodyCheckDistance = 0.4f;
 
-        [Tooltip("Detection radius for fade2 proximity mode (should be larger than CheckRadius)")]
-        public float FadeRadius = 0.8f;
+        [Tooltip("Detection radius for fade proximity mode (should be larger than CheckRadius)")]
+        public float FadeRadius = 0.4f;
 
 
         [Tooltip("What to do if contact with wall")]
@@ -59,33 +59,51 @@ namespace MazeEscape
             return mask != 0 ? mask : WallLayers;
         }
 
-        private float GetBodyFadeAlpha(HashSet<Collider> playerColliders, float maxDistance, LayerMask wallMask)
+        private Vector3 GetBodyReferencePoint(HashSet<Collider> playerColliders)
         {
-            if (playerColliders.Count == 0)
-                return 0f;
+            var controller = GetComponentInParent<CharacterController>();
+            if (controller != null)
+                return controller.bounds.center;
 
-            float minDistance = maxDistance;
+            if (playerColliders.Count == 0)
+                return transform.position;
+
+            Vector3 center = Vector3.zero;
+            int count = 0;
             foreach (Collider playerCollider in playerColliders)
             {
                 if (playerCollider == null)
                     continue;
 
-                Collider[] hits = Physics.OverlapSphere(playerCollider.bounds.center, maxDistance, wallMask);
-                foreach (Collider hit in hits)
-                {
-                    if (playerColliders.Contains(hit))
-                        continue;
+                center += playerCollider.bounds.center;
+                count++;
+            }
 
-                    float distance = Vector3.Distance(playerCollider.bounds.center, hit.ClosestPoint(playerCollider.bounds.center));
-                    if (distance < minDistance)
-                        minDistance = distance;
-                }
+            return count > 0 ? center / count : transform.position;
+        }
+
+        private float GetBodyFadeAlpha(HashSet<Collider> playerColliders, float maxDistance, LayerMask wallMask)
+        {
+            if (playerColliders.Count == 0)
+                return 0f;
+
+            Vector3 bodyReference = GetBodyReferencePoint(playerColliders);
+            float minDistance = maxDistance;
+            Collider[] hits = Physics.OverlapSphere(bodyReference, maxDistance, wallMask);
+            foreach (Collider hit in hits)
+            {
+                if (playerColliders.Contains(hit))
+                    continue;
+
+                float distance = Vector3.Distance(bodyReference, hit.ClosestPoint(bodyReference));
+                if (distance < minDistance)
+                    minDistance = distance;
             }
 
             if (minDistance >= maxDistance)
                 return 0f;
 
-            return Mathf.InverseLerp(maxDistance, 0f, minDistance);
+            return Mathf.InverseLerp(maxDistance, maxDistance * 0.5f, minDistance);
         }
 
         void Update()
@@ -121,7 +139,7 @@ namespace MazeEscape
 
                 float cameraAlpha = 0f;
                 if (hits.Length > 0)
-                    cameraAlpha = Mathf.InverseLerp(FadeRadius, FadeRadius * 0.2f, minDistance);
+                    cameraAlpha = Mathf.InverseLerp(FadeRadius, FadeRadius * 0.5f, minDistance);
 
                 float alpha = Mathf.Max(cameraAlpha, bodyAlpha);
                 Color currentColor = _overlay.color;
