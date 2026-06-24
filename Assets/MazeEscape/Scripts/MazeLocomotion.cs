@@ -69,6 +69,9 @@ namespace MazeEscape
 
         void Update()
         {
+            Vector3 moveDir;
+            bool usingOmni = false;
+
             Quaternion flatRotation = GetMovementRotation();
             if (!IsFiniteQuaternion(flatRotation))
             {
@@ -77,9 +80,6 @@ namespace MazeEscape
 
             float currentYaw = flatRotation.eulerAngles.y;
             Debug.Log($"[OMNI YAW] {currentYaw:F2}");
-
-            Vector3 moveDir;
-            bool usingOmni = false;
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
             Vector2 omniInput = OmniConnectManager.GetMovementVector();
@@ -119,7 +119,17 @@ namespace MazeEscape
 
             if (smoothedMagnitude > threshhold)
             {
-                Vector3 worldMove = flatRotation * Vector3.forward;
+                Vector3 worldMove;
+                if (!usingOmni)
+                {
+                    Quaternion viewRotation = Quaternion.Euler(0f, HMDCamera != null ? HMDCamera.eulerAngles.y : transform.eulerAngles.y, 0f);
+                    worldMove = viewRotation * new Vector3(smoothedInput.x, 0f, smoothedInput.y);
+                }
+                else
+                {
+                    worldMove = flatRotation * Vector3.forward;
+                }
+
                 if (!IsFiniteVector3(worldMove))
                 {
                     worldMove = Vector3.zero;
