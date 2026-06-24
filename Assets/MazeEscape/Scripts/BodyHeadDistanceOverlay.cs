@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,28 +14,16 @@ namespace MazeEscape
         [Tooltip("Head reference point. Leave empty to use this camera transform.")]
         public Transform HeadTransform;
 
-        [Tooltip("Optional canvas group for the overlay root.")]
-        public CanvasGroup OverlayCanvasGroup;
-
         [Tooltip("Optional image component used for the overlay background.")]
         public Image OverlayImage;
-
-        [Tooltip("Optional text component used for the overlay message.")]
-        public TextMeshProUGUI OverlayText;
 
         private void Awake()
         {
             if (HeadTransform == null)
                 HeadTransform = transform;
 
-            if (OverlayCanvasGroup == null)
-                OverlayCanvasGroup = GetComponent<CanvasGroup>();
-
             if (OverlayImage == null)
                 OverlayImage = GetComponent<Image>();
-
-            if (OverlayText == null)
-                OverlayText = GetComponentInChildren<TextMeshProUGUI>(true);
         }
 
         private void Update()
@@ -47,25 +34,11 @@ namespace MazeEscape
             bool showOverlay = distance > Threshold;
             float alpha = showOverlay ? 1f : 0f;
 
-            if (OverlayCanvasGroup != null)
+            if (OverlayImage != null)
             {
-                OverlayCanvasGroup.alpha = alpha;
-            }
-            else
-            {
-                if (OverlayImage != null)
-                {
-                    Color imageColor = OverlayImage.color;
-                    imageColor.a = alpha;
-                    OverlayImage.color = imageColor;
-                }
-
-                if (OverlayText != null)
-                {
-                    Color textColor = OverlayText.color;
-                    textColor.a = alpha;
-                    OverlayText.color = textColor;
-                }
+                Color imageColor = OverlayImage.color;
+                imageColor.a = alpha;
+                OverlayImage.color = imageColor;
             }
         }
 

@@ -71,7 +71,7 @@ namespace MazeEscape
             _victoryText.text = "Escaped!";
             _victoryText.fontSize = 36;
             _victoryText.alignment = TextAlignmentOptions.Center;
-            _victoryText.color = new Color(1f, 0.85f, 0.2f);
+            _victoryText.color = new Color(1f, 0.85f, 0.2f, 1f);
             var textRt = textGo.GetComponent<RectTransform>();
             textRt.anchorMin = Vector2.zero;
             textRt.anchorMax = Vector2.one;
