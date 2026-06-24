@@ -13,6 +13,10 @@ namespace MazeEscape
         [Header("Layer")]
         [Tooltip("Layer assigned to walls and corner posts. Must match CameraFade's WallLayers.")]
         public string WallLayerName = "Wall";
+        [Tooltip("Layer assigned to floor tiles.")]
+        public string FloorLayerName = "Floor";
+        [Tooltip("Layer assigned to the exit marker.")]
+        public string ExitLayerName = "Exit";
 
         [Header("Materials")]
         public Material WallMaterial;
@@ -65,6 +69,8 @@ namespace MazeEscape
             floor.transform.localPosition = origin + new Vector3(CellSize / 2f, -0.05f, CellSize / 2f);
             floor.transform.localScale = new Vector3(CellSize, 0.1f, CellSize);
             if (FloorMaterial) floor.GetComponent<Renderer>().material = FloorMaterial;
+            int layer = LayerMask.NameToLayer(FloorLayerName);
+            if (layer >= 0) floor.layer = layer;
         }
 
         private void BuildWalls(MazeCell cell, Vector3 origin, int cx, int cy,
@@ -164,6 +170,9 @@ namespace MazeEscape
             var mat = ExitMaterial ?? new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = new Color(0f, 0.8f, 0.2f) };
             exitMarker.GetComponent<Renderer>().material = mat;
             Destroy(exitMarker.GetComponent<Collider>());
+
+            int layer = LayerMask.NameToLayer(ExitLayerName);
+            if (layer >= 0) exitMarker.layer = layer;
         }
 
         public Vector3 GetStartPosition() =>

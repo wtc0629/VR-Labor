@@ -194,8 +194,8 @@ MonoBehaviour:
   XROrigin: {fileID: 1717954562066946108}
   HMDCamera: {fileID: 1931428192}
   RightController: {fileID: 2042913251}
-  MinimapLocalOffset: {x: 0.12, y: 0.08, z: 0.25}
-  MinimapLocalEulerAngles: {x: 0, y: 270, z: 0}
+  MinimapLocalOffset: {x: 0, y: 0.085, z: -0.04}
+  MinimapLocalEulerAngles: {x: 0, y: 90, z: 0}
   Minimap: {fileID: 1701623674}
   RightControllerOrigin: {fileID: 2042913251}
 --- !u!114 &582656104
@@ -214,6 +214,8 @@ MonoBehaviour:
   WallHeight: 3
   WallThickness: 0.4
   WallLayerName: Wall
+  FloorLayerName: Floor
+  ExitLayerName: Exit
   WallMaterial: {fileID: 2100000, guid: 393553c85086e4d4daef25e0e30ebede, type: 2}
   CornerPostMaterial: {fileID: 2100000, guid: b72baedea3655e8448aaac40a1c8f904, type: 2}
   FloorMaterial: {fileID: 2100000, guid: f35ffd006522e1241bddc0ac482390d9, type: 2}
@@ -412,8 +414,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HMDCamera: {fileID: 1931428192}
   leftHand: {fileID: 373661954}
-  HelpPanelLocalPosition: {x: 0, y: 0.06, z: 0.04}
-  HelpPanelLocalEulerAngles: {x: 0, y: 90, z: 0}
+  HelpPanelLocalPosition: {x: 0, y: 0.08, z: -0.04}
+  HelpPanelLocalEulerAngles: {x: 0, y: 270, z: 0}
 --- !u!4 &811965367
 Transform:
   m_ObjectHideFlags: 0
@@ -638,6 +640,8 @@ MonoBehaviour:
   WallLayers:
     serializedVersion: 2
     m_Bits: 4294967295
+  WallLayerName: Wall
+  BodyCheckDistance: 5
   FadeRadius: 0.8
   tansition: 1
   _overlay: {fileID: 1784876834}

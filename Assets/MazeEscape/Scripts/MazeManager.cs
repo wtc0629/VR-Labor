@@ -102,6 +102,14 @@ namespace MazeEscape
             var pad = go.AddComponent<TeleportPad>();
             pad.XROrigin = XROrigin;
             pad.CC = XROrigin.GetComponent<CharacterController>();
+
+            int teleportLayer = LayerMask.NameToLayer(pad.TeleportLayerName);
+            if (teleportLayer >= 0)
+            {
+                go.layer = teleportLayer;
+                marker.layer = teleportLayer;
+            }
+
             return pad;
         }
 

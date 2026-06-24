@@ -11,6 +11,7 @@ namespace MazeEscape
         [HideInInspector] public CharacterController CC;
         [HideInInspector] public Transform XROrigin;
 
+        public string TeleportLayerName = "Teleport";
         public float ProximityRadius = 3f;
         public float Cooldown = 1.5f;
 
