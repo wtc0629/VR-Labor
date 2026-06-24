@@ -61,6 +61,7 @@
     <Compile Include="Assets\MazeEscape\Scripts\MazeRenderer.cs" />
     <Compile Include="Assets\MazeEscape\Scripts\MazeManager.cs" />
     <Compile Include="Assets\MazeEscape\Scripts\CollectibleManager.cs" />
+    <Compile Include="Assets\MazeEscape\Scripts\BodyHeadDistanceOverlay.cs" />
     <Compile Include="Assets\VRTemplateAssets\Scripts\LaunchProjectile.cs" />
     <Compile Include="Assets\VRTemplateAssets\Scripts\HandSubsystemManager.cs" />
     <Compile Include="Assets\MazeEscape\Scripts\HelpPanel.cs" />
