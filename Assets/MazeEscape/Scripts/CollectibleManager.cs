@@ -79,7 +79,6 @@ namespace MazeEscape
             var circle = new GameObject("Circle", typeof(Image));
             circle.transform.SetParent(indicator.transform, false);
             var circleImg = circle.GetComponent<Image>();
-            circleImg.sprite = Resources.GetBuiltinResource<Sprite>("UI/Skin/Knob.psd");
             circleImg.color = new Color(0.2f, 0.6f, 1f);
             var circleRt = circle.GetComponent<RectTransform>();
             circleRt.anchorMin = new Vector2(0.06f, 0.12f);

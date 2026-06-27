@@ -11,8 +11,8 @@ namespace MazeEscape
         void OnTriggerEnter(Collider other)
         {
             if (other.GetComponent<CharacterController>() == null) return;
-
-            // Fallback: find WallBreaker in scene if Init() reference was lost
+            var sfx = GameManager.Instance != null ? GameManager.Instance.PowerUpPickupSfx : null;
+            if (sfx != null) AudioSource.PlayClipAtPoint(sfx, transform.position);
             var wb = _wallBreaker != null
                 ? _wallBreaker
                 : Object.FindFirstObjectByType<WallBreaker>();

@@ -518,6 +518,10 @@ MonoBehaviour:
   leftHand: {fileID: 373661954}
   HelpPanelLocalPosition: {x: 0, y: 0.08, z: -0.04}
   HelpPanelLocalEulerAngles: {x: 0, y: 270, z: 0}
+  BgmClip: {fileID: 8300000, guid: 791ba35737983ba4eb2a59522a8fba47, type: 3}
+  VictoryClip: {fileID: 8300000, guid: 68336106888ebd64f804045f99fd8f5d, type: 3}
+  CollectiblePickupSfx: {fileID: 8300000, guid: 36d26a22efebb49468f8d42e36b72d51, type: 3}
+  PowerUpPickupSfx: {fileID: 8300000, guid: 1d942c9955c81e24094f439663fc23bc, type: 3}
 --- !u!4 &811965367
 Transform:
   m_ObjectHideFlags: 0

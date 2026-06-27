@@ -119,7 +119,6 @@ namespace MazeEscape
             var handle = new GameObject("Handle", typeof(Image));
             handle.transform.SetParent(panelRoot, false);
             var handleImg = handle.GetComponent<Image>();
-            handleImg.sprite = Resources.GetBuiltinResource<Sprite>("UI/Skin/Knob.psd");
             handleImg.color = new Color(0.2f, 0.6f, 1f);
             _handleRt = handle.GetComponent<RectTransform>();
             _handleRt.anchorMin = _handleRt.anchorMax = new Vector2(0.5f, 0.25f);

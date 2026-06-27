@@ -13,7 +13,7 @@ namespace MazeEscape
         public float CheckRadius = 0.15f;
 
         [Tooltip("Layer mask for wall geometry only. Do not include the player body layer here.")]
-        public LayerMask WallLayers = LayerMask.GetMask("Wall");
+        public LayerMask WallLayers;
 
         [Tooltip("Layer name assigned to walls and corner posts. Must match MazeRenderer.")]
         public string WallLayerName = "Wall";

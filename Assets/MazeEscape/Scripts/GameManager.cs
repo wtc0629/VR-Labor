@@ -18,16 +18,44 @@ namespace MazeEscape
         public Vector3 HelpPanelLocalPosition = new Vector3(0f, 0f, 0.5f);
         public Vector3 HelpPanelLocalEulerAngles = Vector3.zero;
 
+        [Header("Audio")]
+        [Tooltip("Looping BGM during maze exploration")]
+        public AudioClip BgmClip;
+        [Tooltip("Played on victory (replaces BGM)")]
+        public AudioClip VictoryClip;
+        [Tooltip("Played when picking up a blue collectible sphere")]
+        public AudioClip CollectiblePickupSfx;
+        [Tooltip("Played when picking up the gold wall-breaker sphere")]
+        public AudioClip PowerUpPickupSfx;
+        [Tooltip("Played when teleporting")]
+        public AudioClip TeleportSfx;
+        [Range(0f, 3f)]
+        [Tooltip("Teleport SFX volume boost")]
+        public float TeleportSfxVolume = 1.5f;
+        [Tooltip("Played when destroying a wall with the power-up")]
+        public AudioClip WallDestroySfx;
+        [Range(0f, 1f)]
+        [Tooltip("BGM volume")]
+        public float BgmVolume = 0.6f;
+
         private float _startTime;
         private bool _won;
         private GameObject _victoryPanel;
         private TextMeshProUGUI _victoryText;
+        private AudioSource _musicSource;
 
         void Awake()
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
             _startTime = Time.time;
+
+            _musicSource = gameObject.AddComponent<AudioSource>();
+            _musicSource.playOnAwake = false;
+            _musicSource.spatialBlend = 0f;
+            _musicSource.volume = BgmVolume;
+            PlayBgm();
+
             BuildVictoryPanel();
             SetupHelpPanel();
         }
@@ -92,6 +120,17 @@ namespace MazeEscape
             _won = false;
             _startTime = Time.time;
             _victoryPanel?.SetActive(false);
+            PlayBgm();
+        }
+
+        private void PlayBgm()
+        {
+            if (_musicSource == null || BgmClip == null) return;
+            _musicSource.volume = BgmVolume;
+            _musicSource.loop = true;
+            _musicSource.clip = BgmClip;
+            _musicSource.time = 0f;
+            _musicSource.Play();
         }
 
         public void TriggerWin()
@@ -108,6 +147,18 @@ namespace MazeEscape
                 : "";
             _victoryText.text = $"Escaped!\n{minutes:00}:{seconds:00}{collect}";
             _victoryPanel.SetActive(true);
+
+            if (_musicSource != null)
+            {
+                _musicSource.Stop();
+                if (VictoryClip != null)
+                {
+                    _musicSource.loop = false;
+                    _musicSource.clip = VictoryClip;
+                    _musicSource.Play();
+                }
+            }
+
             Debug.Log($"[MazeEscape] Win! Time: {minutes:00}:{seconds:00}{collect}");
         }
     }

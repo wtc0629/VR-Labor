@@ -98,7 +98,6 @@ namespace MazeEscape
             var circle = new GameObject("Circle", typeof(Image));
             circle.transform.SetParent(_indicator.transform, false);
             var circleImg = circle.GetComponent<Image>();
-            circleImg.sprite = Resources.GetBuiltinResource<Sprite>("UI/Skin/Knob.psd");
             circleImg.color = new Color(1f, 0.8f, 0f);
             var circleRt = circle.GetComponent<RectTransform>();
             circleRt.anchorMin = new Vector2(0.06f, 0.12f);
@@ -167,6 +166,9 @@ namespace MazeEscape
         private void DoDestroy()
         {
             if (_selected == null) return;
+
+            var sfx = GameManager.Instance != null ? GameManager.Instance.WallDestroySfx : null;
+            if (sfx != null) AudioSource.PlayClipAtPoint(sfx, _selected.transform.position);
 
             int cx = _selected.CellX;
             int cy = _selected.CellY;

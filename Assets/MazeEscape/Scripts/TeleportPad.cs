@@ -42,6 +42,18 @@ namespace MazeEscape
         {
             if (_cooldownTimer > 0f || OtherPad == null) return;
 
+            if (GameManager.Instance != null && GameManager.Instance.TeleportSfx != null)
+            {
+                var tmpGo = new GameObject("TeleportSfx");
+                tmpGo.transform.position = XROrigin.position;
+                var src = tmpGo.AddComponent<AudioSource>();
+                src.clip = GameManager.Instance.TeleportSfx;
+                src.volume = GameManager.Instance.TeleportSfxVolume;
+                src.spatialBlend = 0f;
+                src.Play();
+                Destroy(tmpGo, src.clip.length + 0.1f);
+            }
+
             CC.enabled = false;
             XROrigin.position = new Vector3(OtherPad.transform.position.x,
                                              XROrigin.position.y,
