@@ -522,6 +522,10 @@ MonoBehaviour:
   VictoryClip: {fileID: 8300000, guid: 68336106888ebd64f804045f99fd8f5d, type: 3}
   CollectiblePickupSfx: {fileID: 8300000, guid: 36d26a22efebb49468f8d42e36b72d51, type: 3}
   PowerUpPickupSfx: {fileID: 8300000, guid: 1d942c9955c81e24094f439663fc23bc, type: 3}
+  TeleportSfx: {fileID: 8300000, guid: c81137cfbb55f61498026b55932e69ea, type: 3}
+  TeleportSfxVolume: 1.5
+  WallDestroySfx: {fileID: 8300000, guid: b621ec54830f0a84c819fbe7f934bde4, type: 3}
+  BgmVolume: 1
 --- !u!4 &811965367
 Transform:
   m_ObjectHideFlags: 0
