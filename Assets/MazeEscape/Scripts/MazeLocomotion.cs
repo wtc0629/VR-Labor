@@ -239,6 +239,9 @@ namespace MazeEscape
 
             int stepIndex = Mathf.Clamp(Mathf.RoundToInt(Mathf.Clamp01(smoothedMagnitude) * (SpeedLevels.Length - 1)), 0, SpeedLevels.Length - 1);
             float level = SpeedLevels[stepIndex];
+
+            //Debug.Log($"[Speed] magnitude={smoothedMagnitude:F3} → index={stepIndex}, level={level:F2}, finalSpeed={( usingOmni ? level * OmniSpeedMultiplier : level * WalkSpeed ):F3}");
+
             return usingOmni ? level * OmniSpeedMultiplier : level * WalkSpeed;
         }
     }
