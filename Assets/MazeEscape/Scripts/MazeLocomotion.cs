@@ -55,6 +55,7 @@ namespace MazeEscape
         void Awake()
         {
             _cc = GetComponent<CharacterController>();
+            transform.position += Vector3.up * (_cc.skinWidth + 0.5f);
         }
 
         void OnEnable()
@@ -79,7 +80,7 @@ namespace MazeEscape
             }
 
             float currentYaw = flatRotation.eulerAngles.y;
-            Debug.Log($"[OMNI YAW] {currentYaw:F2}");
+            //Debug.Log($"[OMNI YAW] {currentYaw:F2}");
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
             Vector2 omniInput = OmniConnectManager.GetMovementVector();

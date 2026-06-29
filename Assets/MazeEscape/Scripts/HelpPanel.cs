@@ -75,6 +75,7 @@ namespace MazeEscape
             tmp.text =
                 "<color=#FFD700><b>Controls</b></color>\n" +
                 "<color=#AADDFF>[Y]</color>         Toggle this panel\n" +
+                "<color=#AADDFF>[x]</color>         Toggle the minimap and indicators\n" +
                 "<color=#AADDFF>[R Grip]</color>    Confirm teleport\n" +
                 "<color=#AADDFF>[R Trigger]</color> Restart (aim at btn)\n" +
                 "<color=#AADDFF>[R Stick]</color>   Adjust maze size\n" +

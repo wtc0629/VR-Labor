@@ -41,9 +41,16 @@ namespace MazeEscape
             _toggleAction = new InputAction("ToggleMinimap", InputActionType.Button);
             _toggleAction.AddBinding("<XRController>{LeftHand}/primaryButton");
             _toggleAction.Enable();
+            Debug.Log("[Minimap] Toggle action created and enabled");
         }
 
-        void OnDisable() => _toggleAction?.Disable();
+        void OnDestroy()
+        {
+            Debug.Log("[Minimap] OnDestroy — cleaning up toggle action");
+            _toggleAction?.Disable();
+            _toggleAction?.Dispose();
+        }
+
 
         public void Initialize(MazeCell[,] cells, float cellSize, Transform hmdCamera, Transform player, Transform rightHand, Vector3 localOffsetRightHand, Vector3 localEulerAnglesRightHand)
         {
@@ -127,6 +134,7 @@ namespace MazeEscape
                 var canvas = GetComponent<Canvas>();
                 bool show = !canvas.enabled;
                 canvas.enabled = show;
+                Debug.Log($"[Minimap] Toggled → {(show ? "visible" : "hidden")}");
                 CollectibleManager.Instance?.SetVisible(show);
                 _player?.GetComponent<WallBreaker>()?.SetIndicatorVisible(show);
             }
