@@ -143,9 +143,9 @@ namespace MazeEscape
             int seconds = Mathf.FloorToInt(elapsed % 60f);
 
             string collect = CollectibleManager.Instance != null
-                ? $"\nCollect: {CollectibleManager.Instance.GetStatsText()}"
+                ? $"\nCollected: {CollectibleManager.Instance.GetStatsText()}"
                 : "";
-            _victoryText.text = $"Escaped!\n{minutes:00}:{seconds:00}{collect}";
+            _victoryText.text = $"Escaped!\nTime: {minutes:00}:{seconds:00}{collect}";
             _victoryPanel.SetActive(true);
 
             if (_musicSource != null)
