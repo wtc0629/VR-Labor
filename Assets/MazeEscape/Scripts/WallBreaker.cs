@@ -15,23 +15,35 @@ namespace MazeEscape
         public LayerMask WallLayer;
         public float RayDistance = 15f;
 
+
         private bool _hasPowerUp;
         private WallData _selected;
-        private Color _originalColor;
         private GameObject _indicator;
+        private MaterialPropertyBlock _highlightBlock;
+        private MaterialPropertyBlock _clearBlock;
+
+
+
 
         private InputAction _selectAction;
         private InputAction _destroyAction;
 
         void Awake()
-        {
-            // primaryButton = A, secondaryButton = B on right Quest controller
+        {       
+            _highlightBlock = new MaterialPropertyBlock();
+            _highlightBlock.SetColor("_BaseColor", Color.red);
+            _highlightBlock.SetColor("_Color", Color.red);
+
+            _clearBlock = new MaterialPropertyBlock();
+
             _selectAction = new InputAction("SelectWall", InputActionType.Button);
             _selectAction.AddBinding("<XRController>{RightHand}/primaryButton");
-
             _destroyAction = new InputAction("DestroyWall", InputActionType.Button);
             _destroyAction.AddBinding("<XRController>{RightHand}/secondaryButton");
         }
+
+
+
 
         void OnEnable()
         {
@@ -155,13 +167,18 @@ namespace MazeEscape
                     Deselect();
                     _selected = wd;
                     var rend = hit.collider.GetComponent<Renderer>();
-                    _originalColor = rend.material.color;
-                    rend.material.color = Color.red;
+                    if (rend != null)
+                        rend.SetPropertyBlock(_highlightBlock);
                     return;
                 }
             }
             Deselect();
         }
+
+
+
+
+
 
         private void DoDestroy()
         {
@@ -193,9 +210,13 @@ namespace MazeEscape
         {
             if (_selected == null) return;
             var rend = _selected.GetComponent<Renderer>();
-            if (rend != null) rend.material.color = _originalColor;
+            if (rend != null)
+                rend.SetPropertyBlock(_clearBlock); // Leerer Block = zurück zum Original
             _selected = null;
         }
+
+
+
 
         private static void FullRect(RectTransform rt)
         {

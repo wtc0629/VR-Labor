@@ -141,6 +141,7 @@ namespace MazeEscape
 
             var (cx, cy) = PickUniqueCell(MazeWidth, MazeHeight, avoidCorners: true);
 
+            // Sichtbare Kugel – nur Optik
             var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             go.name = "PowerUpSphere";
             go.transform.SetParent(transform);
@@ -148,9 +149,20 @@ namespace MazeEscape
             go.transform.localScale = Vector3.one * 0.4f;
             go.GetComponent<Renderer>().material =
                 new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = new Color(1f, 0.8f, 0f) };
-            go.GetComponent<Collider>().isTrigger = true;
-            go.AddComponent<PowerUpSphere>().Init(XROrigin.GetComponent<WallBreaker>());
+            Destroy(go.GetComponent<Collider>());
+
+            // Unsichtbare Reichweiten-Sphere
+            var pickupRange = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            pickupRange.name = "PickupRange";
+            pickupRange.transform.SetParent(go.transform);
+            pickupRange.transform.localPosition = Vector3.zero;
+            pickupRange.transform.localScale = Vector3.one * 7f;
+            pickupRange.GetComponent<Renderer>().enabled = false;
+            pickupRange.GetComponent<Collider>().isTrigger = true;
+            pickupRange.AddComponent<PowerUpSphere>()
+               .Init(XROrigin.GetComponent<WallBreaker>());
         }
+
 
         private void CreateCollectibleSpheres()
         {
@@ -160,6 +172,7 @@ namespace MazeEscape
             {
                 var (cx, cy) = PickUniqueCell(MazeWidth, MazeHeight, avoidCorners: true);
 
+                // Sichtbare Kugel – nur Optik
                 var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 go.name = "CollectibleSphere";
                 go.transform.SetParent(transform);
@@ -167,10 +180,20 @@ namespace MazeEscape
                 go.transform.localScale = Vector3.one * 0.35f;
                 go.GetComponent<Renderer>().material =
                     new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = new Color(0.2f, 0.6f, 1f) };
-                go.GetComponent<Collider>().isTrigger = true;
-                go.AddComponent<CollectibleSphere>();
+                Destroy(go.GetComponent<Collider>());
+
+                // Unsichtbare Reichweiten-Sphere
+                var pickupRange = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                pickupRange.name = "PickupRange";
+                pickupRange.transform.SetParent(go.transform);
+                pickupRange.transform.localPosition = Vector3.zero;
+                pickupRange.transform.localScale = Vector3.one * 7f;
+                pickupRange.GetComponent<Renderer>().enabled = false;
+                pickupRange.GetComponent<Collider>().isTrigger = true;
+                pickupRange.AddComponent<CollectibleSphere>();
             }
         }
+
 
         private (int, int) PickUniqueCell(int w, int h, bool avoidCorners = true)
         {

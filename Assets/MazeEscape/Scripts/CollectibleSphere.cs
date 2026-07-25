@@ -10,7 +10,9 @@ namespace MazeEscape
             var sfx = GameManager.Instance != null ? GameManager.Instance.CollectiblePickupSfx : null;
             if (sfx != null) AudioSource.PlayClipAtPoint(sfx, transform.position);
             CollectibleManager.Instance?.Collect();
-            Destroy(gameObject);
+
+            // Parent zerstören (sichtbare Kugel) – zerstört automatisch alle Children mit
+            Destroy(transform.parent != null ? transform.parent.gameObject : gameObject);
         }
     }
 }

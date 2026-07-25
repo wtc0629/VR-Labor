@@ -46,6 +46,11 @@ namespace MazeEscape
         private float _verticalVelocity;
         private readonly Queue<InputSample> _inputSamples = new Queue<InputSample>();
 
+        // ── Grip-Toggle ──────────────────────────────────────────────────────────
+        private InputAction _gripToggleAction;
+        private bool _gripWasPressed = false;
+        // ─────────────────────────────────────────────────────────────────────────
+
         private struct InputSample
         {
             public float Time;
@@ -56,20 +61,40 @@ namespace MazeEscape
         {
             _cc = GetComponent<CharacterController>();
             transform.position += Vector3.up * (_cc.skinWidth + 0.5f);
+
+            // Linken VR-Controller Grip-Button als Flip-Flop-Toggle registrieren
+            _gripToggleAction = new InputAction("ToggleMovementMode", InputActionType.Button);
+            _gripToggleAction.AddBinding("<XRController>{LeftHand}/gripButton");
+            _gripToggleAction.Enable();
         }
 
         void OnEnable()
         {
             MoveAction?.action.Enable();
+            _gripToggleAction?.Enable();
         }
 
         void OnDisable()
         {
             MoveAction?.action.Disable();
+            _gripToggleAction?.Disable();
         }
 
         void Update()
         {
+            // ── Grip-Toggle: Flip-Flop bei steigender Flanke (pressed, nicht held) ──
+            bool gripPressed = _gripToggleAction != null && _gripToggleAction.ReadValue<float>() > 0.5f;
+            if (gripPressed && !_gripWasPressed)
+            {
+                MovementMode = MovementMode == MovementReferenceMode.ViewBased
+                    ? MovementReferenceMode.OmniArmRelative
+                    : MovementReferenceMode.ViewBased;
+
+                Debug.Log($"[MovementMode] Gewechselt zu: {MovementMode}");
+            }
+            _gripWasPressed = gripPressed;
+            // ─────────────────────────────────────────────────────────────────────
+
             Vector3 moveDir;
             bool usingOmni = false;
 
@@ -195,7 +220,6 @@ namespace MazeEscape
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
                     float playerYaw = transform.eulerAngles.y;
                     float omniYaw = OmniConnectManager.GetArmYaw();
-                    //float omniYaw = 0f;
                     float relativeYaw = Mathf.DeltaAngle(playerYaw, omniYaw);
                     return Quaternion.Euler(0f, playerYaw + relativeYaw, 0f);
 #else
@@ -239,8 +263,6 @@ namespace MazeEscape
 
             int stepIndex = Mathf.Clamp(Mathf.RoundToInt(Mathf.Clamp01(smoothedMagnitude) * (SpeedLevels.Length - 1)), 0, SpeedLevels.Length - 1);
             float level = SpeedLevels[stepIndex];
-
-            //Debug.Log($"[Speed] magnitude={smoothedMagnitude:F3} → index={stepIndex}, level={level:F2}, finalSpeed={( usingOmni ? level * OmniSpeedMultiplier : level * WalkSpeed ):F3}");
 
             return usingOmni ? level * OmniSpeedMultiplier : level * WalkSpeed;
         }

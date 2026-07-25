@@ -17,7 +17,7 @@ namespace MazeEscape
                 ? _wallBreaker
                 : Object.FindFirstObjectByType<WallBreaker>();
             wb?.GivePowerUp();
-            Destroy(gameObject);
+            Destroy(transform.parent != null ? transform.parent.gameObject : gameObject);
         }
     }
 }
